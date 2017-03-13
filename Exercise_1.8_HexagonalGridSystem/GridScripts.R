@@ -129,7 +129,7 @@ plot(out1)
 points(deer.spdf,col="red")
 
 #Load vegetation raster layer textfile clipped in ArcMap 
-veg <-raster("extentnlcd2.txt")
+veg <-raster(cropnlcd.tif")
 plot(veg)
 class(veg)
 
