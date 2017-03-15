@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="en"><Esri><CreaDate>20130908</CreaDate><CreaTime>18140200</CreaTime><ArcGISFormat>1.0</ArcGISFormat><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="c:\arcgis\desktop10.1\ArcToolbox\Toolboxes\Spatial Analyst Tools.tbx\ExtractByMask" Date="20130908" Time="181402">ExtractByMask forest_cover Hare_Counties C:\GISProjects\Snowshoe_Hare\County_Hab</Process></lineage></DataProperties></Esri></metadata>
