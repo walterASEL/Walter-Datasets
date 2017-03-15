@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<metadata>
+	<idinfo>
+		<citation>
+			<citeinfo>
+				<origin>U.S. Department of Commerce, U.S. Census Bureau, Geography Division</origin>
+				<pubdate>2010</pubdate>
+				<title>TIGER/Line Shapefile, 2010,  county, Dolores County, CO, Linear Hydrography County-based Shapefile</title>
+				<edition>2010</edition>
+				<geoform>vector digital data</geoform>
+				<onlink>http://www.census.gov/geo/www/tiger</onlink>
+			</citeinfo>
+		</citation>
+		<descript>
+			<abstract>The TIGER/Line Files are shapefiles and related database files (.dbf) that are an extract of selected geographic and cartographic information from the U.S. Census Bureau's Master Address File / Topologically Integrated Geographic Encoding and Referencing (MAF/TIGER) Database (MTDB).  The MTDB represents a seamless national file with no overlaps or gaps between parts, however, each TIGER/Line File is designed to stand alone as an independent data set, or they can be combined to cover the entire nation.  Linear Water Features includes single-line drainage water features and artificial path features that run through double-line drainage features such as rivers and streams, and serve as a linear representation of these features.  The artificial path features may correspond to those in the USGS National Hydrographic Dataset (NHD).  However, in many cases the features do not match NHD equivalent feature and will not carry the NHD metadata codes.  These features have a MAF/TIGER Feature Classification Code (MTFCC) beginning with an "H" to indicate the super class of Hydrographic Features.  
+</abstract>
+			<purpose>In order for others to use the information in the Census MAF/TIGER database in a geographic information system (GIS) or for other geographic applications, the Census Bureau releases to the public extracts of the database in the form of TIGER/Line Shapefiles.</purpose>
+			<Subject_Entity>Dolores, CO, (08033)</Subject_Entity>
+		</descript>
+		<timeperd>
+			<timeinfo>
+				<rngdates>
+					<begdate>201001</begdate>
+					<enddate>201007</enddate>
+				</rngdates>
+			</timeinfo>
+			<current>Publication Date</current>
+		</timeperd>
+		<status>
+			<progress>Complete</progress>
+			<update>TIGER/Line Shapefiles are extracted from the Census MAF/TIGER database.  No changes or updates will be made to this version of the TIGER/Line Shapefiles.  Future releases of TIGER/Line Shapefiles will reflect updates made to the Census MAF/TIGER database.</update>
+		</status>
+		<spdom>
+			<bounding>
+				<westbc>-109.043488</westbc>
+				<eastbc>-107.860845</eastbc>
+				<northbc>37.895538</northbc>
+				<southbc>37.484684</southbc>
+			</bounding>
+		</spdom>
+		<keywords>
+			<theme>
+				<themekt>ISO 19115 Topic Categories</themekt>
+				<themekey>inlandWaters</themekey>
+			</theme>
+			<theme>
+				<themekt>None</themekt>
+				<themekey>County or equivalent entity</themekey>
+				<themekey>Linear</themekey>
+				<themekey>Feature</themekey>
+				<themekey>Hydrography</themekey>
+			</theme>
+			<place>
+				<placekt>INCITS.38-200x (R2004),INCITS.31-200x (R2007),INCITS.454-200x,INCITS 455-200x,INCITS 446-2008</placekt>
+				<placekey>United States</placekey>
+				<placekey>U.S.</placekey>
+				<placekey>County or Equivalent Entity</placekey>
+				<placekey>Dolores</placekey>
+				<placekey>08033</placekey>
+			</place>
+		</keywords>
+		<accconst>None</accconst>
+		<useconst>The TIGER/Line Shapefile products are not copyrighted however TIGER/Line and Census TIGER are registered trademarks of the U.S. Census Bureau.  These products are free to use in a product or publication, however acknowledgement must be given to the U.S. Census Bureau as the source.
+The horizontal spatial accuracy information present in these files is provided for the purposes of statistical analysis and census operations only.  No warranty, expressed or implied is made with regard to the accuracy of the spatial accuracy, and no liability is assumed by the U.S. Government in general or the U.S. Census Bureau, specifically as to the spatial or attribute accuracy of the data.  The TIGER/Line Shapefiles may not be suitable for high-precision measurement applications such as engineering problems, property transfers, or other uses that might require highly accurate measurements of the earth's surface.Coordinates in the TIGER/Line shapefiles have six implied decimal places, but the positional accuracy of these coordinates is not as great as the six decimal places suggest.</useconst>
+		<Title_13_Restrictions>Yes, the data are free from Title 13 restrictions</Title_13_Restrictions>
+		<ptcontac>
+			<cntinfo>
+				<cntorgp>
+					<cntorg>U.S. Department of Commerce, U.S. Census Bureau, Geography Division, Geographic Products Branch</cntorg>
+				</cntorgp>
+				<cntaddr>
+					<addrtype>Mailing address</addrtype>
+					<address>4600 Silver Hill Road, Stop 7400</address>
+					<city>Washington</city>
+					<state>DC</state>
+					<postal>20233-7400</postal>
+					<country>United States</country>
+				</cntaddr>
+				<cntvoice>301-763-1128</cntvoice>
+				<cntfax>301-763-4710</cntfax>
+				<cntemail>geo.tiger@census.gov</cntemail>
+			</cntinfo>
+		</ptcontac>
+	</idinfo>
+	<Data_Set_Character_Set>8859part1</Data_Set_Character_Set>
+	<Data_Set_Language>eng</Data_Set_Language>
+	<dataqual>
+		<attracc>
+			<attraccr>Accurate against Federal Information Processing Standards (FIPS), FIPS Publication 6-4, and FIPS-55 at the 100% level for the codes and base names.  The remaining attribute information has been examined but has not been fully tested for accuracy.</attraccr>
+		</attracc>
+		<logic>There may be some inconsistencies in feature names along features.  An anomaly exists with the sporadic occurrence of road segments comprising a complete chain with different MAF/TIGER Feature Census Class Code (MTFCC) values assigned.  This problem could affect applications that use the MTFCC values for network analysis, routing, or for assigning symbology to a feature when creating a map.
+The Census Bureau performed automated tests to ensure logical consistency and limits of shapefiles.  Node/geometry and topology relationships are collected or generated to satisfy topological edit requirements.  These requirements include:
+(1) Complete chains must begin and end at nodes.
+(2) Complete chains must connect to each other at nodes.
+(3) Complete chains do not extend through nodes.
+(4) Left and right polygons are defined for each complete chain element and are consistent throughout the extract process.
+(5) The chains representing the limits of the files are free of gaps.</logic>
+		<complete>Data completeness of the TIGER/Line Shapefiles reflects the contents of the Census MAF/TIGER database at the time the TIGER/Line Shapefiles were created.</complete>
+		<posacc>
+			<horizpa>
+				<horizpar>The Census Bureau uses Global Positioning System (GPS) coordinates at road centerline intersections to evaluate the horizontal spatial accuracy of source files that may be used to realign road features in the MAF/TIGER database and test the horizontal spatial accuracy of the road features in the TIGER/Line Shapefiles.  The test compares a survey-grade GPS coordinate to its associated road centerline intersection in the TIGER/Line Shapefiles.  The test is based on an independent collection of GPS coordinates for a random sample of road intersections from a centerline file that meet certain criteria.  The points are referred to as the sample points and are gathered through a private contractor working for the Census Bureau.  Since the collection method uses survey-quality GPS-based field techniques, the resulting control points are considered 'ground truth' against which the TIGER road centerline intersection coordinates are compared.  The distances between the coordinates are calculated and the Census Bureau determines the Circular Error 95% (CE95).  That is, the accuracy of the file in meters with 95% confidence.  The CE95 can be calculated from the mean and standard deviation by using the formula: mean of differences plus (2.65 times the standard deviation).  CE95 results reported for each file tested are determined using a spreadsheet with embedded statistical formula.  The use and applicability of the spreadsheet and its embedded formula have been verified by Census Bureau statisticians.  The basis of the calculation is the use of the root mean square error (RMSE).  This is the method as stated in the U.S. Government's Federal Geographic Data Committee Standard FGDC-STD-007.3-1998, Geospatial Positioning Accuracy Standards.  Part 3: National Standard for Spatial Data Accuracy.  The results of using this measure of accuracy are in compliance with Federal Spatial Data requirements.  In terms of the Census Bureau application, the dataset coordinate values are those taken from the centerline file and the coordinate values from an independent source of higher accuracy are those acquired through the Census Bureau's contractor.  Please note that the horizontal spatial accuracy, where reported, refers only to the realigned road features identified as matched to the positionally accurate source file with that accuracy.  It is not the spatial accuracy of the TIGER/Line Shapefile as a whole.</horizpar>
+				<qhorizpa>
+					<horizpav>4.129 meters for 5427</horizpav>
+					<horizpae>The Census Bureau uses root mean square error (RMSE) as stated in the FGDC-STD-007. 3-1998, Geospatial Positioning Accuracy Standards, Part 3: National Standard for Spatial Data Accuracy.</horizpae></qhorizpa>
+				<qhorizpa>
+					<horizpav>7.38 meters for 4490</horizpav>
+					<horizpae>The Census Bureau uses root mean square error (RMSE) as stated in the FGDC-STD-007. 3-1998, Geospatial Positioning Accuracy Standards, Part 3: National Standard for Spatial Data Accuracy.</horizpae></qhorizpa>
+			</horizpa>
+		</posacc>
+		<lineage>
+			<srcinfo>
+				<srccite>
+					<citeinfo>
+						<origin>U.S. Department of Commerce, U.S. Census Bureau, Geography Division</origin>
+						<pubdate>Unpublished material</pubdate>
+						<title>Census MAF/TIGER database</title>
+					</citeinfo>
+				</srccite>
+				<typesrc>online</typesrc>
+				<srctime>
+					<timeinfo>
+						<rngdates>
+							<begdate>201001</begdate>
+							<enddate>201007</enddate>
+						</rngdates>
+					</timeinfo>
+					<srccurr>Publication Date</srccurr>
+				</srctime>
+				<srccitea>MAF/TIGER</srccitea>
+				<srccontr>The selected geographic and cartographic information (line segments) are derived from the U.S. Census Bureau's Master Address File Topologically Integrated Geographic Encoding and Referencing (MAF/TIGER) database.</srccontr>
+			</srcinfo>
+			<srcinfo>
+				<srccite>
+					<citeinfo>
+						<origin>4490
+				Utah
+				Division of Information Technology, AGRC</origin>
+						<pubdate>Unknown</pubdate>
+						<title>San Juan County, UT - Version 2</title>
+					</citeinfo>
+				</srccite>
+				<typesrc>email attachment</typesrc>
+				<srctime>
+					<timeinfo>
+						<rngdates>
+							<begdate>Unknown</begdate>
+							<enddate>Unknown</enddate>
+						</rngdates>
+					</timeinfo>
+					<srccurr>Publication Date</srccurr>
+				</srctime>
+				<srccitea>None</srccitea>
+				<srccontr>Coordinates to realign selected road features in the Census MAF/TIGER database.</srccontr>
+			</srcinfo><srcinfo>
+				<srccite>
+					<citeinfo>
+						<origin>5427
+				Harris Corporation</origin>
+						<pubdate>Unknown</pubdate>
+						<title>Dolores, CO - HAS Imagery Extract</title>
+					</citeinfo>
+				</srccite>
+				<typesrc>Unknown</typesrc>
+				<srctime>
+					<timeinfo>
+						<rngdates>
+							<begdate>Unknown</begdate>
+							<enddate>Unknown</enddate>
+						</rngdates>
+					</timeinfo>
+					<srccurr>Unknown</srccurr>
+				</srctime>
+				<srccitea>None</srccitea>
+				<srccontr>Coordinates to realign selected road features in the Census MAF/TIGER database.</srccontr>
+			</srcinfo><srcinfo>
+				<srccite>
+					<citeinfo>
+						<origin>5428
+				USGS - National Hydrography Dataset
+				Coordination and Requirements (C&amp;R)</origin>
+						<pubdate>Unknown</pubdate>
+						<title>National Hydrography Dataset - High Res.</title>
+					</citeinfo>
+				</srccite>
+				<typesrc>Internet Download</typesrc>
+				<srctime>
+					<timeinfo>
+						<rngdates>
+							<begdate>Unknown</begdate>
+							<enddate>Unknown</enddate>
+						</rngdates>
+					</timeinfo>
+					<srccurr>Unknown</srccurr>
+				</srctime>
+				<srccitea>None</srccitea>
+				<srccontr>Coordinates to realign selected hydrographic features in the Census MAF/TIGER database.</srccontr>
+			</srcinfo><srcinfo>
+				<srccite>
+					<citeinfo>
+						<origin>5921
+				USGS - National Hydrography Dataset
+				Coordination and Requirements (C&amp;R)</origin>
+						<pubdate>Unknown</pubdate>
+						<title>National Hydrography Dataset - High Res.</title>
+					</citeinfo>
+				</srccite>
+				<typesrc>Internet Download</typesrc>
+				<srctime>
+					<timeinfo>
+						<rngdates>
+							<begdate>Unknown</begdate>
+							<enddate>Unknown</enddate>
+						</rngdates>
+					</timeinfo>
+					<srccurr>Unknown</srccurr>
+				</srctime>
+				<srccitea>None</srccitea>
+				<srccontr>Coordinates to realign selected hydrographic features in the Census MAF/TIGER database.</srccontr>
+			</srcinfo><srcinfo>
+				<srccite>
+					<citeinfo>
+						<origin>7190
+				Census Bureau - Geography Division
+				US Census Bureau - Geo Div - LFGPB</origin>
+						<pubdate>Unknown</pubdate>
+						<title>2010 ADCAN GPS Feature Updates</title>
+					</citeinfo>
+				</srccite>
+				<typesrc>Unknown</typesrc>
+				<srctime>
+					<timeinfo>
+						<rngdates>
+							<begdate>Unknown</begdate>
+							<enddate>Unknown</enddate>
+						</rngdates>
+					</timeinfo>
+					<srccurr>Unknown</srccurr>
+				</srctime>
+				<srccitea>None</srccitea>
+				<srccontr>Coordinates to realign selected road features in the Census MAF/TIGER database.</srccontr>
+			</srcinfo>
+			<procstep>
+				<procdesc>TIGER/Line Shapefiles are extracted from the Census MAF/TIGER database by nation, state, county, and entity.  Census MAF/TIGER data for all of the aforementioned geographic entities are then distributed among the shapefiles each containing attributes for line, polygon, or landmark geographic data. </procdesc>
+				<srcused>Census MAF/TIGER</srcused>
+				<procdate>2010</procdate>
+			</procstep>
+		</lineage>
+	</dataqual>
+	<spdoinfo>
+		<indspref>Federal Information Processing Standards (FIPS), ANSI, and feature names.</indspref>
+		<direct>Vector</direct>
+		<ptvctinf><esriterm Name="StudyRivers"><efeatyp Sync="TRUE">Simple</efeatyp><efeageom code="3" Sync="TRUE"></efeageom><esritopo Sync="TRUE">FALSE</esritopo><efeacnt Sync="TRUE">0</efeacnt><spindex Sync="TRUE">FALSE</spindex><linrefer Sync="TRUE">FALSE</linrefer></esriterm></ptvctinf></spdoinfo>
+	<spref>
+		<horizsys>
+			<geograph>
+				<latres>0.000458</latres>
+				<longres>0.000458</longres>
+				<geogunit>Decimal degrees</geogunit>
+			</geograph>
+			<geodetic>
+				<horizdn>North American Datum of 1983 in the 48 contiguous states, the District of Columbia, Alaska, Hawaii, Puerto Rico, the Virgin Islands of the United States, and the Pacific Island Areas.</horizdn>
+				<ellips>Geodetic Reference System 80</ellips>
+				<semiaxis>6378137</semiaxis>
+				<denflat>298257</denflat>
+			</geodetic>
+		</horizsys>
+	</spref>
+	<eainfo>
+		<detailed Name="StudyRivers">
+			<enttyp>
+				<enttypl>LINEARWATER.shp</enttypl>
+				<enttypd>Linear Hydrography County-based</enttypd>
+				<enttypds>U.S. Census Bureau</enttypds>
+				<enttypt Sync="TRUE">Feature Class</enttypt><enttypc Sync="TRUE">0</enttypc></enttyp>
+			<attr><attrlabl Sync="TRUE">FID</attrlabl><attalias Sync="TRUE">FID</attalias><attrtype Sync="TRUE">OID</attrtype><attwidth Sync="TRUE">4</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale><attrdef Sync="TRUE">Internal feature number.</attrdef><attrdefs Sync="TRUE">Esri</attrdefs><attrdomv><udom Sync="TRUE">Sequential unique whole numbers that are automatically generated.</udom></attrdomv></attr><attr><attrlabl Sync="TRUE">Shape</attrlabl><attalias Sync="TRUE">Shape</attalias><attrtype Sync="TRUE">Geometry</attrtype><attwidth Sync="TRUE">0</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale><attrdef Sync="TRUE">Feature geometry.</attrdef><attrdefs Sync="TRUE">Esri</attrdefs><attrdomv><udom Sync="TRUE">Coordinates defining the features.</udom></attrdomv></attr><attr>
+				<attrlabl>STATEFP</attrlabl>
+				<attrdef>Current state Federal Information Processing Standards (FIPS)
+                 code</attrdef>
+				<attrdefs>U.S. Census Bureau</attrdefs>
+				<attrdomv>
+					<codesetd>
+						<codesetn>INCITS.38-200x (R2004), Codes for the Identification of
+                      the States, the District of Columbia, Puerto Rico, and the
+                      Insular Areas of the United States (Formerly FIPS 5-2)</codesetn>
+						<codesets>U.S. Census Bureau</codesets>
+					</codesetd>
+				</attrdomv>
+				<attalias Sync="TRUE">STATEFP</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">2</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr>
+			<attr>
+				<attrlabl>COUNTYFP</attrlabl>
+				<attrdef>Current county Federal Information Processing Standards (FIPS)
+                 code</attrdef>
+				<attrdefs>U.S. Census Bureau</attrdefs>
+				<attrdomv>
+					<codesetd>
+						<codesetn>INCITS.31-200x (R2007), Codes for the Identification of
+                      the Counties and Equivalent Areas of the United States,
+                      Puerto Rico, and the Insular Areas of the United States
+                      (Formerly FIPS 6-4)</codesetn>
+						<codesets>U.S. Census Bureau</codesets>
+					</codesetd>
+				</attrdomv>
+				<attalias Sync="TRUE">COUNTYFP</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">3</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr>
+			<attr>
+				<attrlabl>ANSICODE</attrlabl>
+				<attrdef>Current official code for the landmark for use by federal
+                 agencies for data transfer and dissemination</attrdef>
+				<attrdefs>U.S. Census Bureau</attrdefs>
+				<attrdomv>
+					<codesetd>
+						<codesetn>INCITS 446-2008, (GNIS) Identifying Attributes for Named
+                      Physical and Cultural Geographic Features (Except Roads
+                      and Highways) of the United States, Its Territories,
+                      Outlying Areas, and Freely Associated Areas, and the
+                      Waters of the Same to the Limit of the Twelve-Mile
+                      Statutory Zone</codesetn>
+						<codesets>U.S. Geological Survey (USGS)</codesets>
+					</codesetd>
+				</attrdomv>
+				<attalias Sync="TRUE">ANSICODE</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">8</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr>
+			<attr>
+				<attrlabl>LINEARID</attrlabl>
+				<attrdef>Linear feature identifier</attrdef>
+				<attrdefs>U.S. Census Bureau</attrdefs>
+				<attrdomv>
+					<udom>data are unavailable</udom>
+				</attrdomv>
+				<attalias Sync="TRUE">LINEARID</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">22</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr>
+			<attr>
+				<attrlabl>FULLNAME</attrlabl>
+				<attrdef>Concatenation of expanded text for prefix qualifier, prefix
+                 direction, prefix type, base name, suffix type, suffix
+                 direction, and suffix qualifier (as available) with a space
+                 between each expanded text field</attrdef>
+				<attrdefs>U.S. Census Bureau</attrdefs>
+				<attrdomv>
+					<udom>data are unavailable</udom>
+				</attrdomv>
+				<attalias Sync="TRUE">FULLNAME</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">100</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr>
+			<attr>
+				<attrlabl>ARTPATH</attrlabl>
+				<attrdef>Artificial path indicator</attrdef>
+				<attrdefs>U.S. Census Bureau</attrdefs>
+				<attrdomv>
+					<edom>
+						<edomv>C</edomv>
+						<edomvd>Census or Local Artificial Path</edomvd>
+						<edomvds>U.S. Census Bureau</edomvds>
+					</edom>
+					<edom>
+						<edomv>N</edomv>
+						<edomvd>Not an Artificial Path (default)</edomvd>
+						<edomvds>U.S. Census Bureau</edomvds>
+					</edom>
+					<edom>
+						<edomv>U</edomv>
+						<edomvd>USGS Artificial Path or Connector Inside Water</edomvd>
+						<edomvds>U.S. Census Bureau</edomvds>
+					</edom>
+				</attrdomv>
+				<attalias Sync="TRUE">ARTPATH</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">1</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr>
+			<attr>
+				<attrlabl>MTFCC</attrlabl>
+				<attrdef>MAF/TIGER feature class code</attrdef>
+				<attrdefs>U.S. Census Bureau</attrdefs>
+				<attrdomv>
+					<edom>
+						<edomv>H1100</edomv>
+						<edomvd>Connector</edomvd>
+						<edomvds>U.S. Census Bureau</edomvds>
+					</edom>
+					<edom>
+						<edomv>H3010</edomv>
+						<edomvd>Stream/River</edomvd>
+						<edomvds>U.S. Census Bureau</edomvds>
+					</edom>
+					<edom>
+						<edomv>H3013</edomv>
+						<edomvd>Braided Stream</edomvd>
+						<edomvds>U.S. Census Bureau</edomvds>
+					</edom>
+					<edom>
+						<edomv>C3020</edomv>
+						<edomvd>Canal, Ditch or Aqueduct</edomvd>
+						<edomvds>U.S. Census Bureau Entity_and_Attribute_Information:</edomvds>
+					</edom>
+				</attrdomv>
+				<attalias Sync="TRUE">MTFCC</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">5</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr>
+		</detailed>
+	</eainfo>
+	<distinfo>
+		<distrib>
+			<cntinfo>
+				<cntorgp>
+					<cntorg>U.S. Department of Commerce, U.S. Census Bureau, Geography Division, Geographic Products Branch</cntorg>
+				</cntorgp>
+				<cntaddr>
+					<addrtype>Mailing address</addrtype>
+					<address>4600 Silver Hill Road, Stop 7400</address>
+					<city>Washington</city>
+					<state>DC</state>
+					<postal>20233-7400</postal>
+					<country>United States</country>
+				</cntaddr>
+				<cntvoice>301-763-1128</cntvoice>
+				<cntfax>301-763-4710</cntfax>
+				<cntemail>geo.tiger@census.gov</cntemail>
+			</cntinfo>
+		</distrib>
+		<distliab>No warranty, expressed or implied is made with regard to the accuracy of these data, and no liability is assumed by the U.S. Government in general or the U.S. Census Bureau in specific as to the spatial or attribute accuracy of the data.  The act of distribution shall not constitute any such warranty and no responsibility is assumed by the U.S. government in the use of these files.  The boundary information in the TIGER/Line Shapefiles is for statistical data collection and tabulation purposes only; their depiction and designation for statistical purposes do not constitute a determination of jurisdictional authority or rights of ownership or entitlement and they are not legal land descriptions.</distliab>
+		<stdorder>
+			<digform>
+				<digtinfo>
+					<formname>TGRSHP (compressed)</formname>
+					<filedec>PK-ZIP, version 1.93 A or higher</filedec>
+				</digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://www.census.gov/geo/www/tiger</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+					<offoptn>
+						<offmedia>DVD-ROM (Only if offered offline)</offmedia>
+						<recfmt>ISO 9660</recfmt>
+					</offoptn>
+				</digtopt>
+			</digform>
+			<fees>The online copy of the TIGER/Line files may be accessed without charge.</fees>
+			<ordering>To obtain more information about ordering TIGER/Line shapefiles visit http://www.census.gov/geo/www/tiger </ordering>
+		</stdorder>
+		<techpreq>The TIGER/Line shapefiles contain geographic data only and do not include display mapping software or statistical data.  For information on how to use the TIGER/Line shapefile data with specific software package users shall contact the company that produced the software.</techpreq>
+	</distinfo>
+	<metainfo>
+		<metd>20100507</metd>
+		<metc>
+			<cntinfo>
+				<cntorgp>
+					<cntorg>U.S. Department of Commerce, U.S. Census Bureau, Geography Division, Geographic Products Branch</cntorg>
+				</cntorgp>
+				<cntaddr>
+					<addrtype>Mailing address</addrtype>
+					<address>4600 Silver Hill Road, Stop 7400</address>
+					<city>Washington</city>
+					<state>DC</state>
+					<postal>20233-7400</postal>
+					<country>United States</country>
+				</cntaddr>
+				<cntvoice>301-763-1128</cntvoice>
+				<cntfax>301-763-4710</cntfax>
+				<cntemail>geo.tiger@census.gov</cntemail>
+			</cntinfo>
+		</metc>
+		<metstdn>FGDC Content Standards for Digital Geospatial Metadata</metstdn>
+		<metstdv>FGDC-STD-001-1998</metstdv>
+		<Metadata_Character_Set>8859part1</Metadata_Character_Set>
+		<Metadata_File_Identifier>tl_2010_08033_linearwater.shp.xml</Metadata_File_Identifier>
+		<Metadata_Language>eng</Metadata_Language>
+	</metainfo>
+	<dataIdInfo><envirDesc Sync="TRUE">Microsoft Windows 7 Version 6.1 (Build 7601) Service Pack 1; Esri ArcGIS 10.1.0.3035</envirDesc><dataLang><languageCode value="eng" Sync="TRUE"></languageCode><countryCode value="USA" Sync="TRUE"></countryCode></dataLang><idCitation><resTitle Sync="TRUE">StudyRivers</resTitle><presForm><PresFormCd value="005" Sync="TRUE"></PresFormCd></presForm></idCitation><spatRpType><SpatRepTypCd value="001" Sync="TRUE"></SpatRepTypCd></spatRpType></dataIdInfo><mdLang><languageCode value="eng" Sync="TRUE"></languageCode><countryCode value="USA" Sync="TRUE"></countryCode></mdLang><mdChar><CharSetCd value="006" Sync="TRUE"></CharSetCd></mdChar><Esri><DataProperties><itemProps><itemName Sync="TRUE">StudyRivers</itemName><imsContentType Sync="TRUE">002</imsContentType><itemSize Sync="TRUE">0.000</itemSize><itemLocation><linkage Sync="TRUE">file://\\DRD11_HPEI7\C$\GISprojects\SanLouisValleyGIS\DoveCreek\TigerRivers\StudyRivers.shp</linkage><protocol Sync="TRUE">Local Area Network</protocol></itemLocation></itemProps><coordRef><type Sync="TRUE">Geographic</type><geogcsn Sync="TRUE">GCS_North_American_1983</geogcsn><csUnits Sync="TRUE">Angular Unit: Degree (0.017453)</csUnits><peXml Sync="TRUE">&lt;GeographicCoordinateSystem xsi:type='typens:GeographicCoordinateSystem' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:typens='http://www.esri.com/schemas/ArcGIS/10.1'&gt;&lt;WKT&gt;GEOGCS[&amp;quot;GCS_North_American_1983&amp;quot;,DATUM[&amp;quot;D_North_American_1983&amp;quot;,SPHEROID[&amp;quot;GRS_1980&amp;quot;,6378137.0,298.257222101]],PRIMEM[&amp;quot;Greenwich&amp;quot;,0.0],UNIT[&amp;quot;Degree&amp;quot;,0.0174532925199433],AUTHORITY[&amp;quot;EPSG&amp;quot;,4269]]&lt;/WKT&gt;&lt;XOrigin&gt;-400&lt;/XOrigin&gt;&lt;YOrigin&gt;-400&lt;/YOrigin&gt;&lt;XYScale&gt;11258999068426.238&lt;/XYScale&gt;&lt;ZOrigin&gt;-100000&lt;/ZOrigin&gt;&lt;ZScale&gt;10000&lt;/ZScale&gt;&lt;MOrigin&gt;-100000&lt;/MOrigin&gt;&lt;MScale&gt;10000&lt;/MScale&gt;&lt;XYTolerance&gt;8.9831528411952133e-009&lt;/XYTolerance&gt;&lt;ZTolerance&gt;0.001&lt;/ZTolerance&gt;&lt;MTolerance&gt;0.001&lt;/MTolerance&gt;&lt;HighPrecision&gt;true&lt;/HighPrecision&gt;&lt;LeftLongitude&gt;-180&lt;/LeftLongitude&gt;&lt;WKID&gt;4269&lt;/WKID&gt;&lt;LatestWKID&gt;4269&lt;/LatestWKID&gt;&lt;/GeographicCoordinateSystem&gt;</peXml></coordRef><lineage><Process ToolSource="c:\program files (x86)\arcgis\desktop10.1\ArcToolbox\Toolboxes\Data Management Tools.tbx\Merge" Date="20130416" Time="155954">Merge tl_2010_08033_linearwater;tl_2010_08083_linearwater;tl_2010_08085_linearwater;tl_2010_08113_linearwater;tl_2010_49037_linearwater C:\GISprojects\SanLouisValleyGIS\DoveCreek\TigerRivers\StudyRivers.shp "STATEFP "STATEFP" true true false 2 Text 0 0 ,First,#,tl_2010_08033_linearwater,STATEFP,-1,-1,tl_2010_08083_linearwater,STATEFP,-1,-1,tl_2010_08085_linearwater,STATEFP,-1,-1,tl_2010_08113_linearwater,STATEFP,-1,-1,tl_2010_49037_linearwater,STATEFP,-1,-1;COUNTYFP "COUNTYFP" true true false 3 Text 0 0 ,First,#,tl_2010_08033_linearwater,COUNTYFP,-1,-1,tl_2010_08083_linearwater,COUNTYFP,-1,-1,tl_2010_08085_linearwater,COUNTYFP,-1,-1,tl_2010_08113_linearwater,COUNTYFP,-1,-1,tl_2010_49037_linearwater,COUNTYFP,-1,-1;ANSICODE "ANSICODE" true true false 8 Text 0 0 ,First,#,tl_2010_08033_linearwater,ANSICODE,-1,-1,tl_2010_08083_linearwater,ANSICODE,-1,-1,tl_2010_08085_linearwater,ANSICODE,-1,-1,tl_2010_08113_linearwater,ANSICODE,-1,-1,tl_2010_49037_linearwater,ANSICODE,-1,-1;LINEARID "LINEARID" true true false 22 Text 0 0 ,First,#,tl_2010_08033_linearwater,LINEARID,-1,-1,tl_2010_08083_linearwater,LINEARID,-1,-1,tl_2010_08085_linearwater,LINEARID,-1,-1,tl_2010_08113_linearwater,LINEARID,-1,-1,tl_2010_49037_linearwater,LINEARID,-1,-1;FULLNAME "FULLNAME" true true false 100 Text 0 0 ,First,#,tl_2010_08033_linearwater,FULLNAME,-1,-1,tl_2010_08083_linearwater,FULLNAME,-1,-1,tl_2010_08085_linearwater,FULLNAME,-1,-1,tl_2010_08113_linearwater,FULLNAME,-1,-1,tl_2010_49037_linearwater,FULLNAME,-1,-1;ARTPATH "ARTPATH" true true false 1 Text 0 0 ,First,#,tl_2010_08033_linearwater,ARTPATH,-1,-1,tl_2010_08083_linearwater,ARTPATH,-1,-1,tl_2010_08085_linearwater,ARTPATH,-1,-1,tl_2010_08113_linearwater,ARTPATH,-1,-1,tl_2010_49037_linearwater,ARTPATH,-1,-1;MTFCC "MTFCC" true true false 5 Text 0 0 ,First,#,tl_2010_08033_linearwater,MTFCC,-1,-1,tl_2010_08083_linearwater,MTFCC,-1,-1,tl_2010_08085_linearwater,MTFCC,-1,-1,tl_2010_08113_linearwater,MTFCC,-1,-1,tl_2010_49037_linearwater,MTFCC,-1,-1"</Process><Process ToolSource="c:\program files (x86)\arcgis\desktop10.1\ArcToolbox\Toolboxes\Data Management Tools.tbx\Project" Date="20130416" Time="160026">Project StudyRivers C:\GISprojects\SanLouisValleyGIS\DoveCreek\TigerRivers\AlbersRivers.shp PROJCS['NAD_1983_Albers',GEOGCS['GCS_North_American_1983',DATUM['D_North_American_1983',SPHEROID['GRS_1980',6378137.0,298.257222101]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]],PROJECTION['Albers'],PARAMETER['False_Easting',0.0],PARAMETER['False_Northing',0.0],PARAMETER['Central_Meridian',-96.0],PARAMETER['Standard_Parallel_1',29.5],PARAMETER['Standard_Parallel_2',45.5],PARAMETER['Latitude_Of_Origin',23.0],UNIT['Meter',1.0]] # GEOGCS['GCS_North_American_1983',DATUM['D_North_American_1983',SPHEROID['GRS_1980',6378137.0,298.257222101]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]]</Process></lineage></DataProperties><SyncDate>20130416</SyncDate><SyncTime>15595300</SyncTime><ModDate>20130416</ModDate><ModTime>15595300</ModTime><CreaDate>20130416</CreaDate><CreaTime>16002600</CreaTime><ArcGISFormat>1.0</ArcGISFormat><SyncOnce>TRUE</SyncOnce></Esri><distInfo><distFormat><formatName Sync="TRUE">Shapefile</formatName></distFormat><distTranOps><transSize Sync="TRUE">0.000</transSize></distTranOps></distInfo><mdHrLv><ScopeCd value="005" Sync="TRUE"></ScopeCd></mdHrLv><mdHrLvName Sync="TRUE">dataset</mdHrLvName><refSysInfo><RefSystem><refSysID><identCode code="4269" Sync="TRUE"></identCode><idCodeSpace Sync="TRUE">EPSG</idCodeSpace><idVersion Sync="TRUE">7.9.4</idVersion></refSysID></RefSystem></refSysInfo><spatRepInfo><VectSpatRep><geometObjs Name="StudyRivers"><geoObjTyp><GeoObjTypCd value="002" Sync="TRUE"></GeoObjTypCd></geoObjTyp><geoObjCnt Sync="TRUE">0</geoObjCnt></geometObjs><topLvl><TopoLevCd value="001" Sync="TRUE"></TopoLevCd></topLvl></VectSpatRep></spatRepInfo><mdDateSt Sync="TRUE">20130416</mdDateSt></metadata>
