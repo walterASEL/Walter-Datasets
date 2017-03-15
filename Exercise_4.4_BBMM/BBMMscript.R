@@ -1,0 +1,214 @@
+library(maptools)
+library(sp)
+library(foreign)
+library(lattice)
+library(BBMM)
+library(rgdal)
+library(PBSmapping)
+library(stringr)
+
+panther<-read.csv("pantherjitter.csv",header=T)
+str(panther)
+panther$CatID <- as.factor(panther$CatID)
+#First, we need to get Date and time into proper format for R
+#Note that Time in DateTimeET2 is single digit for some
+panther$NewTime <- str_pad(panther$TIMEET2,4, pad= "0")
+panther$NewDate <- paste(panther$DateET2,panther$NewTime)
+#Used to sort data in code below for all deer
+panther$DT <- as.POSIXct(strptime(panther$NewDate, format='%Y %m %d %H%M'))
+#Sort Data
+panther <- panther[order(panther$CatID, panther$DT),]
+#TIME DIFF NECESSARY IN BBMM CODE
+timediff <- diff(panther$DT)*60
+# remove first entry without any difference 
+panther <- panther[-1,] 
+panther$timelag <-as.numeric(abs(timediff))
+
+cat143<-subset(panther, panther$CatID == "143")
+cat143 <- cat143[-1,] #Remove first record with wrong timelag
+cat143$CatID <- factor(cat143$CatID)
+BBMM = brownian.bridge(x=cat143$X, y=cat143$Y, time.lag=cat143$timelag, location.error=34, cell.size=100)
+bbmm.summary(BBMM)
+
+#Plot results for all contours
+contours = bbmm.contour(BBMM, levels=c(seq(50, 90, by=10), 95, 99), locations=cat143, plot=TRUE)
+# Print result
+print(contours)
+
+# Create data.frame indicating cells within the contour desired and export as Ascii Grid
+bbmm.contour = data.frame(x = BBMM$x, y = BBMM$y, probability = BBMM$probability)
+
+
+# Pick a contour for export as Ascii
+bbmm.50 = bbmm.contour[bbmm.contour$probability >= contours$Z[1],]
+bbmm.50$in.out <- 1 
+
+bbmm.50 <-bbmm.50[,-3]
+# Output ascii file for cells within specified contour.
+m50 = SpatialPixelsDataFrame(points = bbmm.50[c("x", "y")], data=bbmm.50)
+# m50.g = as(m50, "SpatialGridDataFrame")
+# writeAsciiGrid(m50.g, "50ContourInOut.asc", attr=ncol(bbmm.50))
+
+# Convert to SpatialPolygonsDataFrame and export as ESRI Shapefile
+shp.50 <- as(m50, "SpatialPolygonsDataFrame")
+map.ps50 <- SpatialPolygons2PolySet(shp.50)
+diss.map.50 <- joinPolys(map.ps50, operation = 'UNION')
+diss.map.50 <- as.PolySet(diss.map.50, projection = 'UTM', zone = '17')
+diss.map.p50 <- PolySet2SpatialPolygons(diss.map.50, close_polys = TRUE)
+data50 <- data.frame(PID = 1)
+diss.map.p50 <- SpatialPolygonsDataFrame(diss.map.p50, data = data50)
+# writeOGR(diss.map.p50, dsn = ".", layer="contour50", driver = "ESRI Shapefile")
+# map.50 <- readOGR(dsn=".", layer="contour50")
+# plot(map.50)
+
+# Pick a contour for export as Ascii
+bbmm.80 = bbmm.contour[bbmm.contour$probability >= contours$Z[4],]
+bbmm.80$in.out <- 1 
+
+bbmm.80 <-bbmm.80[,-3]
+# Output ascii file for cells within specified contour.
+m80 = SpatialPixelsDataFrame(points = bbmm.80[c("x", "y")], data=bbmm.80)
+# m80.g = as(m80, "SpatialGridDataFrame")
+# writeAsciiGrid(m80.g, "80ContourInOut.asc", attr=ncol(bbmm.80))
+
+# Convert to SpatialPolygonsDataFrame and export as ESRI Shapefile
+shp.80 <- as(m80, "SpatialPolygonsDataFrame")
+map.ps80 <- SpatialPolygons2PolySet(shp.80)
+diss.map.80 <- joinPolys(map.ps80, operation = 'UNION')
+diss.map.80 <- as.PolySet(diss.map.80, projection = 'UTM', zone = '17')
+diss.map.p80 <- PolySet2SpatialPolygons(diss.map.80, close_polys = TRUE)
+data80 <- data.frame(PID = 1)
+diss.map.p80 <- SpatialPolygonsDataFrame(diss.map.p80, data = data80)
+# writeOGR(diss.map.p80, dsn = ".", layer="contour80", driver = "ESRI Shapefile")
+# map.80 <- readOGR(dsn=".", layer="contour80")
+# plot(map.80)
+
+# Pick a contour for export as Ascii
+bbmm.90 = bbmm.contour[bbmm.contour$probability >= contours$Z[5],]
+bbmm.90$in.out <- 1 
+
+bbmm.90 <-bbmm.90[,-3]
+# Output ascii file for cells within specified contour.
+m90 = SpatialPixelsDataFrame(points = bbmm.90[c("x", "y")], data=bbmm.90)
+# m90.g = as(m90, "SpatialGridDataFrame")
+# writeAsciiGrid(m90.g, "90ContourInOut.asc", attr=ncol(bbmm.90))
+
+# Convert to SpatialPolygonsDataFrame and export as ESRI Shapefile
+shp.90 <- as(m90, "SpatialPolygonsDataFrame")
+map.ps90 <- SpatialPolygons2PolySet(shp.90)
+diss.map.90 <- joinPolys(map.ps90, operation = 'UNION')
+diss.map.90 <- as.PolySet(diss.map.90, projection = 'UTM', zone = '17')
+diss.map.p90 <- PolySet2SpatialPolygons(diss.map.90, close_polys = TRUE)
+data90 <- data.frame(PID = 1)
+diss.map.p90 <- SpatialPolygonsDataFrame(diss.map.p90, data = data90)
+# writeOGR(diss.map.p90, dsn = ".", layer="contour90", driver = "ESRI Shapefile")
+# map.90 <- readOGR(dsn=".", layer="contour90")
+# plot(map.90)
+
+# Pick a contour for export as Ascii
+bbmm.95 = bbmm.contour[bbmm.contour$probability >= contours$Z[6],]
+bbmm.95$in.out <- 1 
+
+bbmm.95 <-bbmm.95[,-3]
+# Output ascii file for cells within specified contour.
+m95 = SpatialPixelsDataFrame(points = bbmm.95[c("x", "y")], data=bbmm.95)
+# m95.g = as(m95, "SpatialGridDataFrame")
+# writeAsciiGrid(m95.g, "95ContourInOut.asc", attr=ncol(bbmm.95))
+
+# Convert to SpatialPolygonsDataFrame and export as ESRI Shapefile
+shp.95 <- as(m95, "SpatialPolygonsDataFrame")
+map.ps95 <- SpatialPolygons2PolySet(shp.95)
+diss.map.95 <- joinPolys(map.ps95, operation = 'UNION')
+diss.map.95 <- as.PolySet(diss.map.95, projection = 'UTM', zone = '17')
+diss.map.p95 <- PolySet2SpatialPolygons(diss.map.95, close_polys = TRUE)
+data95 <- data.frame(PID = 1)
+diss.map.p95 <- SpatialPolygonsDataFrame(diss.map.p95, data = data95)
+# writeOGR(diss.map.p95, dsn = ".", layer="contour95", driver = "ESRI Shapefile")
+# map.95 <- readOGR(dsn=".", layer="contour95")
+# plot(map.95)
+
+# Pick a contour for export as Ascii
+bbmm.99 = bbmm.contour[bbmm.contour$probability >= contours$Z[7],]
+bbmm.99$in.out <- 1 
+
+bbmm.99 <-bbmm.99[,-3]
+# Output ascii file for cells within specified contour.
+m99 = SpatialPixelsDataFrame(points = bbmm.99[c("x", "y")], data=bbmm.99)
+# m99.g = as(m99, "SpatialGridDataFrame")
+# writeAsciiGrid(m99.g, "99ContourInOut.asc", attr=ncol(bbmm.99))
+
+# Convert to SpatialPolygonsDataFrame and export as ESRI Shapefile
+shp.99 <- as(m99, "SpatialPolygonsDataFrame")
+map.ps99 <- SpatialPolygons2PolySet(shp.99)
+diss.map.99 <- joinPolys(map.ps99, operation = 'UNION')
+diss.map.99 <- as.PolySet(diss.map.99, projection = 'UTM', zone = '17')
+diss.map.p99 <- PolySet2SpatialPolygons(diss.map.99, close_polys = TRUE)
+data99 <- data.frame(PID = 1)
+diss.map.p99 <- SpatialPolygonsDataFrame(diss.map.p99, data = data99)
+# writeOGR(diss.map.p99, dsn = ".", layer="contour99", driver = "ESRI Shapefile")
+# map.99 <- readOGR(dsn=".", layer="contour99")
+# plot(map.99)
+
+#Now let's only include locations collected within the 7 hour schedule (i.e., < 421 minutes)
+loc <- subset(cat143, cat143$timelag != "NA" & cat143$timelag < 421)
+BBMM2 = brownian.bridge(x=loc$X, y=loc$Y, time.lag=loc$timelag, location.error=34, cell.size=100)
+bbmm.summary(BBMM2)
+contours1 = bbmm.contour(BBMM2, levels=c(seq(50, 90, by=10), 95, 99), locations=loc, plot=TRUE)
+
+#Now let's exclude the extreme 1% of locations from cat143 based on time difference
+freq <- as.data.frame(table(round(cat143$timelag)))
+# result is Var1 = the time difference, and Freq = its frequency in the data
+freq$percent <- freq$Freq/dim(cat143)[1]*100
+freq$sum[1] <- freq$percent[1]
+for (j in 2:dim(freq)[1]){
+freq$sum[j] <- freq$percent[j]+freq$sum[j-1]
+}
+indicator <- which(freq$sum>99)
+cutoff <- as.numeric(as.character(freq$Var1[min(indicator)]))
+cutoff
+
+loc2 <- subset(cat143, cat143$timelag < 2940)
+str(loc2)
+BBMM3 = brownian.bridge(x=loc2$X, y=loc2$Y, time.lag=loc2$timelag, location.error=34, cell.size=100)
+bbmm.summary(BBMM3)
+
+#Plot results for all contours
+contours2 = bbmm.contour(BBMM3, levels=c(seq(50, 90, by=10), 95, 99), locations=loc2, plot=TRUE)
+
+#Be sure to change bbmm.contours and rerun Steps 7-11 each time before running each section of code below
+
+raw.df <- data.frame("x"=cat143$X,"y"=cat143$Y)
+##Define the projection of the coordinates
+proj4string <- CRS("+proj=utm +zone=17N +ellps=WGS84")
+##Make SpatialPointsDataFrame using the XY, attributes, and projection
+spdf <- SpatialPointsDataFrame(raw.df, cat143, proj4string = proj4string)
+plot(diss.map.p99, col="grey",axes=T)
+plot(diss.map.p95, add=TRUE)
+plot(diss.map.p90, add=TRUE)
+plot(diss.map.p80, add=TRUE)
+plot(diss.map.p50, col="red",add=TRUE)
+points(spdf)
+
+loc.df <- data.frame("x"=loc$X,"y"=loc$Y)
+##Define the projection of the coordinates
+proj4string <- CRS("+proj=utm +zone=17N +ellps=WGS84")
+##Make SpatialPointsDataFrame using the XY, attributes, and projection
+spdf2 <- SpatialPointsDataFrame(loc.df, loc, proj4string = proj4string)
+plot(diss.map.p99, col="grey",axes=T)
+plot(diss.map.p95, add=TRUE)
+plot(diss.map.p90, add=TRUE)
+plot(diss.map.p80, add=TRUE)
+plot(diss.map.p50, col="red",add=TRUE)
+points(spdf2)
+
+loc2.df <- data.frame("x"=loc2$X,"y"=loc2$Y)
+##Define the projection of the coordinates
+proj4string <- CRS("+proj=utm +zone=17N +ellps=WGS84")
+##Make SpatialPointsDataFrame using the XY, attributes, and projection
+spdf3 <- SpatialPointsDataFrame(loc2.df, loc2, proj4string = proj4string)
+plot(diss.map.p99, col="grey",axes=T)
+plot(diss.map.p95, add=TRUE)
+plot(diss.map.p90, add=TRUE)
+plot(diss.map.p80, add=TRUE)
+plot(diss.map.p50, col="red",add=TRUE)
+points(spdf3)
