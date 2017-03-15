@@ -1,0 +1,15 @@
+<PAMDataset>
+  <Metadata>
+    <MDI key="DataType">Generic</MDI>
+  </Metadata>
+  <PAMRasterBand band="1">
+    <GDALRasterAttributeTable />
+    <Metadata>
+      <MDI key="LAYER_TYPE">athematic</MDI>
+      <MDI key="STATISTICS_MINIMUM">1515</MDI>
+      <MDI key="STATISTICS_MAXIMUM">4344</MDI>
+      <MDI key="STATISTICS_MEAN">2637.5998636064</MDI>
+      <MDI key="STATISTICS_STDDEV">532.9414128741</MDI>
+    </Metadata>
+  </PAMRasterBand>
+</PAMDataset>
