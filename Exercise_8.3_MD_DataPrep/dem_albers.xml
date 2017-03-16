@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="en"><Esri><CreaDate>20130502</CreaDate><CreaTime>12020100</CreaTime><ArcGISFormat>1.0</ArcGISFormat><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="c:\program files (x86)\arcgis\desktop10.1\ArcToolbox\Toolboxes\Conversion Tools.tbx\RasterToASCII" Date="20130502" Time="120201">RasterToASCII dem30_albers C:\GISprojects\SanLouisValleyGIS\DoveCreek\DEM\AlbersDEM\Dem_albers.TXT</Process></lineage></DataProperties></Esri></metadata>
