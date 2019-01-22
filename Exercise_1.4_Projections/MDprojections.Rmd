@@ -1,0 +1,93 @@
+---
+title: "1.4 Transformations between coordinate systems"
+author: "Manual of Applied Spatial Ecology"
+date: "1/8/2018"
+output: 
+  pdf_document: default
+  html_document: default
+---
+1\. Exercise 1.4 - Download and extract zip folder into your preferred location
+
+2\. Set working directory to the extracted folder in R under Session - Set Working Directory...
+
+3\. First we need to load the packages needed for the exercise
+```{r include=FALSE}
+library(rgdal)
+```
+4\. Now open the script "MDprojections.R" and run code directly from the script
+```{r}
+study.states<-readOGR(dsn=".",layer="MDcounties")
+plot(study.states, col="grey")
+```
+Let's zoom into the region we have locations instead of county level
+```{r}
+study.zoom<-readOGR(dsn=".",layer="MDzoom")
+plot(study.zoom, col="grey")
+```
+5\. Import the csv file that contains all the mule deer locations by ID
+```{r}
+muleys <-read.csv("muleysexample.csv", header=T)
+```
+6\. Create a spatial data frame of raw mule deer locations with projection defined similar to study site shapefile (i.e., WGS84)
+```{r}
+coords<-data.frame(x = muleys$Long, y = muleys$Lat)
+crs<-"+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0"
+plot(coords)
+```
+7\. Remove outlier locations
+```{r}
+newmuleys <-subset(muleys, muleys$Long > -110.50 & muleys$Lat > 37.3 
+   & muleys$Long < -107)
+muleys <- newmuleys
+```
+8\. Create a new spatial data frame of mule deer locations with outliers removed and projection defined similar to study site shapefile (i.e., WGS84)
+```{r}
+coords<-data.frame(x = muleys$Long, y = muleys$Lat)
+crs<-"+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0"
+plot(coords)
+```
+
+9\. Create a spatial points data frame of mule deer locations with projection defined similar to study site shapefile (i.e., WGS84)
+```{r}
+deer.spdf <- SpatialPointsDataFrame(coords= coords, data = muleys, proj4string = CRS(crs))
+deer.spdf[1:5,]
+class(deer.spdf)
+proj4string(deer.spdf)
+plot(deer.spdf)
+points(deer.spdf, col="yellow")
+```
+
+10\. Now let's project both the mule deer locations and study site shapefile to NAD83 UTM Zone 12 (Fig. 1.4, 1.5)
+```{r}
+new.crs <-CRS("+proj=utm +zone=12 +datum=WGS84")
+MDzoomUTM12 <-spTransform(study.zoom, CRS=new.crs)
+plot(MDzoomUTM12, col="bisque")
+class(MDzoomUTM12)
+proj4string(MDzoomUTM12)
+summary(MDzoomUTM12)
+
+#projection for mule deer locations
+deer.crs <-CRS("+proj=utm +zone=12 +datum=WGS84")
+deerUTM12 <-spTransform(deer.spdf, CRS=deer.crs)
+points(deerUTM12, col="red")
+class(deerUTM12)
+proj4string(deerUTM12)
+deerUTM12[1:5,]
+
+#See new projected coordinates in UTM 12N for the first 5 locations
+coordinates(deerUTM12)[1:5,]
+
+#plot coordinates in Lat Long over coordinates in UTM 12N
+plot(coords)
+par(new=TRUE)
+plot(deerUTM12, col="red")
+
+plot(study.zoom)
+par(new=TRUE)
+plot(deer.spdf, col="red")
+
+plot(MDzoomUTM12,col="bisque")
+par(new=TRUE)
+plot(deerUTM12, col="red")
+```
+
