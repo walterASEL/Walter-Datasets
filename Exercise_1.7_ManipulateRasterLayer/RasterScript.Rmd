@@ -29,8 +29,7 @@ library(maptools)
 crs <- CRS("+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 
   +y_0=0 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0")
 #CRS of raster layers
-crs2 <- CRS("+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 
-  +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs")
+crs2 <- "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
 utm.crs<-"+proj=utm +zone=17N +ellps=WGS84"
 ```
 6\. Alternatively, you can set your working directory by opening a previously saved workspace by double clicking it in that folder which will also serve to set that folder as the working directory. All of the raster layers we are going to use will be located here
@@ -186,8 +185,7 @@ bvspdf <- SpatialPointsDataFrame(coords= coords, data = bv49, proj4string = CRS(
 plot(bvspdf, col="red")
 #NOTE: Locations must be assigned to the UTM coordinate system prior to projection to Albers 
 #so won't overlay on veg layer at this point because veg is in Albers
-bv49Albers <-spTransform(bvspdf, CRS("+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 
-  +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"))
+bv49Albers <-spTransform(bvspdf, CRS(crs2))
 class(bv49Albers)
 proj4string(bv49Albers)
 bv49Albers[1:5,]
@@ -214,8 +212,6 @@ y.pts<-sample(seq(veg@extent@ymin, veg@extent@ymax, by=10),1000)
 
 #Now create a spatial points file from the randomly generated points
 coords2<-data.frame(x = x.pts, y = y.pts)
-crs2<-"+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 
-  +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
 head(coords2)
 points(coords2, bg="red", cex=.5,col="blue")
 
@@ -224,8 +220,6 @@ points(coords2, bg="red", cex=.5,col="blue")
 veg.sample<-extract(rc1, coords2)
 head(veg.sample)
 veg.sample<-subset(coords2,!is.na(veg.sample))
-str(veg.sample)
-head(veg.sample)
 points(veg.sample,col="red")
 ```
 \newline
