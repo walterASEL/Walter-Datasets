@@ -34,9 +34,7 @@ summary(muleys$id)
 
 #Let us subset data so there are fewer locations to work with
 muley8 <- subset(muleys, id=="D8")
-summary <- table(muley8$UTM_Zone,muley8$id)
-summary(muley8$id)
-muley8$id <- factor(muley8$id)
+muley8$id <- droplevels(muley8$id)
 
 #Remove outlier locations if needed
 summary(muley8$Long)
