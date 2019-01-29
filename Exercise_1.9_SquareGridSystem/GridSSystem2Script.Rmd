@@ -1,0 +1,145 @@
+---
+title: "1.9 Creating a Square Polygon Grid Over a Study Area"
+author: "Manual of Applied Spatial Ecology"
+date: "1/16/2018"
+output: 
+  pdf_document: default
+  html_document: default
+---
+```{r include=FALSE}
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
+```
+1\. Exercise 1.9 - Download and extract zip folder into your preferred location
+
+2\. Set working directory to the extracted folder in R under Session - Set Working Directory...
+
+3\. Now open the script "GridSystem2Script.Rmd" and run code directly from the script
+
+4\. First we need to load the packages needed for the exercise
+```{r warning=FALSE, message=FALSE}
+library(sp)
+library(raster)
+library(adehabitatMA)
+```
+5\. Now let's have a separate section of code to include projection information we will use throughout the exercise. In previous versions, these lines of code were within each block of code
+```{r}
+crs<-"+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+Albers.crs <-CRS("+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 
+  +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs")
+crs2<-"+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96
+  +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+#NOTE the difference between crs and Albers.crs with one used to define and the other to project, respectively.
+```
+6\. We need to have all layers in same projection so import, create, and remove outliers for mule deer locations then project all to the Albers projection as we did previously.
+```{r}
+muleys <-read.csv("muleysexample.csv", header=T)
+summary(muleys$id)
+
+#Remove outlier locations
+newmuleys <-subset(muleys, muleys$Long > -110.50 & muleys$Lat >   37.8 & muleys$Long < -107)
+muleys <- newmuleys
+
+#Make a spatial data frame of locations after removing outliers
+coords<-data.frame(x = muleys$Long, y = muleys$Lat)
+plot(coords)
+
+deer.spdf <- SpatialPointsDataFrame(coords= coords, data = muleys, proj4string = CRS(crs))
+proj4string(deer.spdf)
+
+#Project deer.spdf to Albers as in previous exercise
+deer.albers <-spTransform(deer.spdf, CRS=Albers.crs)
+proj4string(deer.albers)
+bbox(deer.albers)
+```
+7\. Create points for x and y from the bounding box of all mule deer locations with 1500 m spacing between each point.
+```{r}
+plot(deer.albers)
+#Create vectors of the x and y points 
+x <- seq(from = -1127964, to = -1115562, by = 1500) 
+y <- seq(from = 1718097, to = 1724867, by = 1500)
+```
+8\. Create a grid of all pairs of coordinates (as a data.frame) using the "expand grid" function and then make it a gridded object.
+```{r}
+xy <- expand.grid(x = x, y = y)
+class(xy)
+
+#Make grid points into a Spatial Points Data Frame
+grid.pts<-SpatialPointsDataFrame(coords= xy, data=xy, proj4string = CRS(crs2))
+proj4string(grid.pts)
+gridded(grid.pts)
+class(grid.pts)
+
+#Make points a gridded object (i.e., TRUE or FALSE)
+gridded(grid.pts) <- TRUE
+gridded(grid.pts)
+```
+9\. Make the grid of points into a Spatial Polygon then convert the spatial polygons to a SpatialPolygonsDataFrame.
+```{r fig.height=9, fig.width=9}
+grid <- as(grid.pts, "SpatialPolygons") 
+plot(grid)
+class(grid)
+summary(grid)
+gridspdf <- SpatialPolygonsDataFrame(grid,
+  data=data.frame(id=row.names(grid), row.names=row.names(grid))) 
+names.grd <- sapply(gridspdf@polygons, function(x) slot(x,"ID"))
+text(coordinates(gridspdf), labels=sapply(slot(gridspdf, "polygons"),
+  function(i) slot(i, "ID")), cex=0.5)
+points(deer.albers, col="red")
+```
+\newpage
+
+10\. Similar to the hexagonal grid, identify the cell ID that contains each mule deer location.
+```{r}
+o = over(deer.albers,gridspdf)
+head(o)
+new = cbind(deer.albers@data, o)
+```
+11\. We get some NA errors because our grid does not encompass all mule deer locations so expand the grid then re-run the code over from xy through new2 again (i.e., Lines 62-86).
+```{r}
+x <- seq(from = -1127964, to = -1115562, by = 1500) 
+y <- seq(from = 1718097, to = 1725867, by = 1500) 
+```
+
+```{r}
+##BE SURE TO RUN CODE FROM XY CREATION THROUGH NEW2 AGAIN THEN LOOK AT DATA!!
+o2 = over(deer.albers,gridspdf)
+head(o2)
+new2 = cbind(deer.albers@data, o2)#No more NAs causing errors!
+```
+12\. Now we can load a vegetation raster layer textfile clipped in ArcMap to summarize vegetation categories within each polygon grid cell.
+```{r}
+veg <-raster("extentnlcd2.txt")
+plot(veg)
+class(veg)
+```
+13\. Clip the raster within the extent of the newly created grid
+```{r}
+bbclip <- crop(veg, gridspdf)
+plot(bbclip)
+points(deer.albers, col="red")
+plot(gridspdf, add=T)
+
+#Cell size of raster layer
+xres(bbclip)
+
+#Create histogram of vegetation categories in bbclip
+hist(bbclip)
+
+#Calculate cell size in square meters
+ii <- calcperimeter(gridspdf)#requires adehabitatMA package
+as.data.frame(ii[1:5,])
+```
+14\. We can extract the vegetation characteristics within each polygon of the grid. 
+```{r}
+table = extract(bbclip,gridspdf)
+str(table[1])
+```
+15\. We can then tabulate area of each vegetation category within each polygon by extracting vegetation within each polygon by ID then appending the results back to the extracted table by running it twice but with different names. Summarizing the vegetation characteristics in each cell will be used in future resource selection analysis or disease epidemiology.
+```{r}
+area = extract(bbclip,gridspdf)
+combine=lapply(area,table)
+combine[[1]]#Shows vegetation categories and numbers of cells in grid #1
+combine[[27]]
+```
+
