@@ -1,0 +1,104 @@
+---
+title: "2.5 Importing Dynamically Downscaled Global Climate Data"
+author: "Manual of Applied Spatial Ecology"
+date: "1/18/2018"
+output: 
+  pdf_document: default
+  html_document: default
+---
+This exercise will provide some code for manipulating climate change data from the Regional Climate Downscaling by copy the link into your browser:
+http://regclim.coas.oregonstate.edu/data-access/index.html or just select the link here: [Regional Climate Downscaling](http://regclim.coas.oregonstate.edu/data-access/index.html)
+. IMPORTANT: For each climate projection, must change name in first command and file name in last command.
+
+1\. Exercise 2.5 - Download and extract zip folder into your preferred location
+
+2\. Set working directory to the extracted folder in R under Session - Set Working Directory...
+
+3\. Now open the script "NetCDF_Script.Rmd" and run code directly from the script
+
+4\. First we need to load the packages needed for the exercise
+```{r warning=FALSE, message=FALSE, hide=TRUE}
+library(ncdf4)
+```
+5\. Open netCDF and setting verbose=true provides details about the data in the netcdf file including the varid. You need to know the varid to select the variable you want to extract/summarize. Note: the dimensions x, y, time also get a varid so you will need to subtract 3 from the varid of interest to get the correct one.
+```{r warning=FALSE, message=FALSE, hide=TRUE}
+dat <- nc_open("Monthly_AvgMinTemp_1995-99_MPI.nc", write=TRUE,  readunlim=TRUE, verbose=FALSE)  
+
+#Read data to load all the data from the downloaded variable into the tmin object
+tmin <- dat$var[[1]]
+
+#####################################
+# The following illustrates how to read the data 
+#####################################
+print(paste(tmin$name)) #in this case the 'field name' is TAMIN
+
+# Grab data for TAMIN variable and place in object df1
+df1 <- ncvar_get(dat, tmin)
+
+head(df1, n = 10L)# head(x, n = 6L, ...); head returns the first data  entries, x is the object, n sets the number of entries displayed. tail returns  the last of the data entries			
+# Dimensions of df1 (x, y, time)
+dim(df1)
+
+# Dimensions can also be examined one at a time
+dim(df1)[1]		# number of x grids (36)
+dim(df1)[2]		# number of y grids (21)
+dim(df1)[3]		# number of months in file (49)
+#NOTE: FILE INCLUDES MONTHS OTHER THAN JANUARY (Jans are 1,13,25,37,49)
+
+# Check first element
+df1[1,1,1]
+```
+```{r eval=FALSE}
+# Check first January for all x,y
+df1[,,1]
+```
+```{r}
+#Create a new matrix which is monthly averages for each grid cell. Make the new  matix the same size (i.e. same
+# number of rows and columns as there are in the dataframe df1
+sum1 <- array(data=NA, c(dim(df1)[1],dim(df1)[2] ))
+dim(sum1)
+
+# Create January mean TAMIN for each x-y coordinate
+for(i in 1:dim(df1)[1]){ # loop over x-coords
+	for(j in 1:dim(df1)[2]){ # loop over y-coords
+		sum1[i, j] <- (df1[i,j,1]+df1[i,j,13]+df1[i,j,25]+df1[i,j,37]+df1[i,j,49])/5
+	}
+}
+
+###########################################################
+###########################################################
+# Create netcdf file from sum1 (contains matrix of new data)
+###########################################################
+# Get x and y coordinates from original "dat" ncdf file
+x  = ncvar_get(nc=dat,varid="x")   
+y  = ncvar_get(nc=dat,varid="y")  
+
+# Check dimensions
+length(x)
+length(y)
+dim(sum1)
+
+## define the netcdf coordinate variables - note that these are coming from the dat  file with actual values
+dim1 = ncdim_def( "X","meters", as.double(x))
+dim2 = ncdim_def( "Y","meters", as.double(y))
+
+## define the EMPTY (climate) netcdf variable and define names that will be used in  the var.def.ncdf function
+# Define climate variable names
+	new.name <- 'mintemp'
+# Define units of measurement for variable
+	units <- 'degreesC'
+# Define long name for variable
+	long.name <- 'Jan average min temperature'
+
+varz = ncvar_def(new.name,units, list(dim1,dim2), -1, 
+          longname=long.name)
+
+
+# associate the netcdf variable with a netcdf file   
+# put the variable into the file, and close
+
+nc.ex = nc_create( "MPI1999-95.nc", varz )
+ncvar_put(nc.ex, varz, sum1)
+nc_close(nc.ex)
+```
+
