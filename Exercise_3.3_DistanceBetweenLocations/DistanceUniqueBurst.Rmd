@@ -25,7 +25,7 @@ library(class)
 muleys <-read.csv("DCmuleysedited.csv", header=T)
 #Code to select an individual animal
 muley15 <- subset(muleys, id=="D15")
-table(muley15$UTM_Zone,muley15$id)
+table(muley15$id)
 muley15$id <- droplevels(muley15$id)
 
 #Sort data to address error in code and then look at first 20 records of data to confirm
@@ -36,9 +36,7 @@ muley15 <- muley15[order(muley15$GPSFixTime),]
 6\. Prepare data to create trajectories using the ltraj command in Adehabitat LT
 ```{r}
 ######################################################
-#Example of a trajectory of type II (time recorded) with conversion of the date to the
-#format POSIX that nNeeds to be done to get proper digits of date into R then POSIXct 
-#uses library(chron)
+## Example of a trajectory of type II (time recorded) with conversion of the date to the format POSIX that nNeeds to be done to get proper digits of date into R then POSIXct uses library(chron)
 da <- as.character(muley15$GPSFixTime)
 da <- as.POSIXct(strptime(muley15$GPSFixTime,format="%Y.%m.%d %H:%M:%S"))
 head(da)
@@ -50,12 +48,11 @@ muley15 <-muley15[-1,]
 muley15$timediff <-as.numeric(abs(timediff)) 
 
 #Clean up muley15 for outliers
-newmuleys <-subset(muley15, muley15$X > 599000 & muley15$X < 705000 & muley15$Y > 4167000 
-  & muley15$timediff < 14401)
+newmuleys <-subset(muley15, muley15$X > 599000 & muley15$X < 705000 & muley15$Y > 4167000 & muley15$timediff < 14401)
 muley15 <- newmuleys
 ```
 7\. Create a spatial data frame of locations for muley 15 for use in creating trajectories that includes time difference between locations and dates in proper format (as.POSIXct)
-```{r fig.height=4, fig.width=4}
+```{r}
 data.xy = muley15[c("X","Y")]
 #Creates class Spatial Points for all locations
 xysp <- SpatialPoints(data.xy)
@@ -73,11 +70,13 @@ busp<-data.frame(muley15[23])
 merge<-data.frame(idsp,dtsp,busp)
 #Adds ID and Date data frame with locations data frame
 coordinates(merge)<-sppt
+plot(merge)
 ```
 8\. Create an object of class "ltraj" for muley15 dataset
-```{r fig.height=4, fig.width=4}
+```{r}
 ltraj <- as.ltraj(coordinates(merge),merge$da,id=merge$id)
 plot(ltraj)
+ltraj
 
 #Now let's look at time differences between locations before moving forward
 summary(muley15$timediff)
@@ -85,7 +84,7 @@ summary(muley15$timediff)
 ```
 9\. Need to create separate "bursts" for each trajectory based on the number of locations collected each day. In our case it was 8 (i.e., locations collected every 3 hours during a 24-hour period).
 ```{r}
-## We want to study the trajectory of the day at the scale of the day. We define one trajectory 
+#We want to study the trajectory of the day at the scale of the day. We define one trajectory 
 #per day. The trajectory should begin at 2200 hours so the following function returns TRUE if
 #the date is time between 06H00 and 23H00 (i.e. results in 7-8 locations/day bursts)
 foo <- function(date) {
@@ -101,7 +100,6 @@ deer <- cutltraj(ltraj, "foo(date)", nextr = TRUE)
 #In cutltraj(ltraj, "foo(date)", nextr = TRUE) :
 #  At least 3 relocations are needed for a burst
 # 345 relocations have been deleted
-
 head(deer)
 ```
 10\. Code to change ltraj to a data.frame to summarize distance between locations for each daily burst
@@ -114,6 +112,8 @@ dfdeer <- subset(dfdeer, !is.na(dfdeer$dist))#remove NAs from last location of a
 mean_dist <- do.call(data.frame, aggregate(dfdeer$dist, by=list(dfdeer$burst), 
     function(x) c(mean = mean(x), sd = sd(x), n=abs(length(x)))))
 
-#Write.csv gives csv output of Summary
-write.csv(mean_dist, file = "Distance.csv")
+#Write.table gives csv output of Summary.  Be sure to specify the directory 
+#and the output files will be stored there 
+write.table(mean, file = "Distance.csv", sep =",", row.names = TRUE, 
+  col.names = TRUE, qmethod ="double")
 ```
