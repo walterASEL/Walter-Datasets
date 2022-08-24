@@ -1,0 +1,46 @@
+---
+title: "3.1 Importing datasets from a web source"
+author: "Manual of Applied Spatial Ecology"
+date: "3/11/2022"
+output: 
+  pdf_document: default
+  html_document: default
+editor_options: 
+  chunk_output_type: console
+---
+Movebank.org is a cloud-based repository for relocation data from GPS-collared or VHF-collared animals. It provides a storage facility in the cloud that can serve as a backup for your data or a transfer portal to share data among colleagues or interested researchers. Similar to any email account, each user has a Movebank account that has a login and password to gain access to your data. Administration privileges can be given to anyone with an account for viewing and downloading data.
+
+1\. Exercise 3.1 - Download and extract zip folder into your preferred location
+
+2\. Set working directory to the extracted folder in R under Session - Set Working Directory...
+
+3\. Now open the script "DMAdeerMovebank.Rmd" and run code directly from the script
+
+4\. First we need to load the packages needed for the exercise
+```{r warning=FALSE, message=FALSE}
+library(move)
+library(RCurl)
+library(circular)
+```
+5\. Next we are going to the [Movebank](https://www.movebank.org/) home page and explore what it has to offer. Need to create an account or select a dataset that does not require permission to use.
+```{r eval=FALSE}
+login <- movebankLogin(username="wdwalter", password="Cervus54")
+```
+```{r eval=FALSE}
+deer <- getMovebankData(study="DMA White-tailed Deer 2018 Pennsylvania USA",
+                        login=login, moveObject=TRUE)
+n.indiv(deer)
+n.locs(deer)
+#Plot the first deer in the stack
+plot(deer[[1]])
+
+#Now we will select a single deer to explore more
+deer1 <- deer[['X20212_20242F']]
+plot(deer1)
+
+#Select and plot locations of the initial 2 deer in your list
+deer2 <- deer[[c(1,2)]]
+plot(deer2)
+#Determine names of initial 2 deer selected above
+namesIndiv(deer2)
+```
