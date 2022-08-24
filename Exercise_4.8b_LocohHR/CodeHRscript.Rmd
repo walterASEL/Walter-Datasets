@@ -1,0 +1,95 @@
+---
+html_document: default
+author: "Manual of Applied Spatial Ecology"
+date: "3/11/2022"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+title: "4.8 Local Convex Hull (LoCoH)"
+editor_options: 
+  chunk_output_type: console
+---
+Local convex hull nonparametric kernel method (LoCoH), which generalizes the minimum convex polygon method, produces bounded home ranges and better convergence properties than parametric kernel methods as sample size increases (Getz et al. 2007, Getz and Wilmers 2004). The use of LoCoH also has been investigated for identifying hard boundaries (i.e. rivers, canyons) of home ranges because it is essentially a non-parametric kernel method using minimum convex polygon construction. The use of polygons instead of kernels gives LoCoH the ability to produced hard edges or boundaries that will not overlap into unused spaces common to kernel methods (Getz et al. 2007). Without getting into to much detail, LoCoH has 3 modifications that reference the k-nearest neighbor convex hulls (NNCH) in some form. The 3 terms are fixed k, fixed radius (r-NNCH), and adaptive (a-NNCH) that are comparable to kernel smoothing of href, lscv, and plug-in, respectively.
+
+1\. Exercise 4.8 - Download and extract zip folder into your preferred location
+
+2\. Set working directory to the extracted folder in R under Session - Set Working Directory...
+
+3\. Now open the script "Locohscript.Rmd" and run code directly from the script
+
+4\. First we need to load the packages needed for the exercise
+```{r warning=FALSE, message=FALSE}
+library(adehabitatHR)
+library(rgdal)
+```
+5\. Now let's have a separate section of code to include projection information we will use throughout the exercise. In previous versions, these lines of code were within each block of code
+```{r}
+utm17.crs <- CRS("+proj=utm +zone=17N +ellps=WGS84")
+```
+6\. Run code directly from the script
+```{r}
+#Get input file
+panther <- read.csv("pantherjitter2.csv")
+panther$CatID <- as.factor(panther$CatID)
+
+#Or explore with one panther with 381 relocations
+cat159 <- subset(panther, CatID=="159")
+cat159$CatID <- factor(cat159$CatID)
+
+#Get the relocation data from the source file
+data.xy = cat159[c("x","y")]
+
+xysp <- SpatialPoints(data.xy)
+
+#Creates a Spatial Data Frame from 
+sppt<-data.frame(xysp)
+#Creates a spatial data frame of ID
+idsp<-data.frame(cat159[1])
+#Adds ID and Date data frame with locations data frame
+coordinates(idsp)<-sppt
+proj4string(idsp) <- CRS("+proj=utm +zone=17 +ellps=WGS84")
+locsdf <-as.data.frame(idsp)
+head(locsdf)
+## Shows the relocations
+plot(data.xy, col="red")
+
+## Examinates the changes in home-range size for various values of k
+## Be patient! the algorithm can be very long
+#LoC.area <- LoCoH.k.area(idsp, k=c(18:24))
+## 24 points seems to be a good choice (rough asymptote for all animals)
+## the k-LoCoH method:
+nn <- LoCoH.k(idsp[,1], k=19)
+## Graphical display of the results
+plot(nn, border=NA)
+## the object nn is a list of objects of class
+## SpatialPolygonsDataFrame
+length(nn)
+names(nn)
+class(nn[[1]])
+
+## The 95% home range is the smallest area for which the
+## proportion of relocations included is larger or equal
+## to 95% In this case, it is the 339th row of the
+## SpatialPolygonsDataFrame.
+plot(nn[[1]][339,],lwd=2)
+
+#The 50% home range code is on line 146
+plot(nn[[1]][146,],add=TRUE)
+
+#The 99% home range code is on line 359
+plot(nn[[1]][359,],lwd=3, add=TRUE)
+
+#Save shapefiles of resulting home range
+ver <- getverticeshr(nn)
+ver
+plot(ver)
+#writeOGR(ver,dsn="FixedK",layer="FixedK24", driver = "ESRI Shapefile", overwrite=TRUE)
+##Overwrite will not work so must edit path so "FixedK" folder is created with code below.
+ver50 <-getverticeshr(nn, percent=50)
+#writeOGR(ver50,dsn="FixedK",layer="50FixedK24", driver = "ESRI Shapefile",overwrite=TRUE)
+ver95 <-getverticeshr(nn, percent=95)
+#writeOGR(ver95,dsn="FixedK",layer="95FixedK24", driver = "ESRI Shapefile",overwrite=TRUE)
+ver99 <-getverticeshr(nn, percent=99)
+#writeOGR(ver99,dsn="FixedK",layer="99FixedK24", driver = "ESRI Shapefile",overwrite=TRUE)
+```
