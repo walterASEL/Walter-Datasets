@@ -1,14 +1,16 @@
 ---
 title: "2.4 Using Data in R"
 author: "Manual of Applied Spatial Ecology"
-date: "1/16/2018"
+date: "3/11/2022"
 output: 
   pdf_document: default
   html_document: default
+editor_options: 
+  chunk_output_type: console
 ---
 This code is designed to process data downloaded from Climate Date Online.
 <http://www.ncdc.noaa.gov/cdo-web/> This version looks at weather stations 
-that provide snowfall data in and around Pennyslvania. The code pulls out
+that provide snowfall data in and around Pennsylvania. The code pulls out
 the desired data from the downloaded aggregate weather-station file and 
 calculates the mean annual snowfall per weather station for 12/1/94 - 3/31/05.
 The data is then exported to a text file for interpolation in ArcGIS.
@@ -29,12 +31,8 @@ library(rgdal)
 library(gstat)
 library(plyr)
 ```
-5\. This code is designed to process data downloaded from NOAA Date. This version looks at weather stations that provide snowfall data in and around Pennsylvania. The code pulls out the desired data from the downloaded aggregate weather-station file and calculates the mean annual snowfall per weather station for 12/1/94 - 3/31/05. The data is then exported to a text file for interpolation in ArcGIS.
-```{r}
-#Remove other objects from the working session ###
-rm(list=ls())
-```
-6\. Read weather station data - note the use of stringsAsFactors=FALSE and na.strings='-9999'
+5\. This code is designed to process data downloaded from NOAA Date. This version looks at weather stations that provide snowfall data in and around Pennsylvania. The code pulls out the desired data from the downloaded aggregate weather-station file and calculates the mean annual snowfall per weather station for 12/1/94 - 3/31/05. The data is then exported to a text file for interpolation in R or ArcGIS.
+First, we read weather station data - note the use of stringsAsFactors=FALSE and na.strings='-9999'
 ```{r}
 WS <-read.table('Weather_Station_Data-Sep_01Dec1994-31March2005.txt', 
   stringsAsFactors=FALSE, na.strings='-9999',header=T)
@@ -52,7 +50,7 @@ WS$Year = as.numeric(format(WS$NewDate, format = "%Y"))
 WS$Month = as.numeric(format(WS$NewDate, format = "%m"))
 WS$Day = as.numeric(format(WS$NewDate, format = "%d"))
 ```
-7\. Make a subset of WS that includes only the months of Dec-March with further manipulation of the data for desired output of project objectives.
+6\. Make a subset of WS that includes only the months of Dec-March with further manipulation of the data for desired output of project objectives.
 ```{r}
 Winter <- WS[WS$Month %in% c(1,2,3,12), ]
 
@@ -71,7 +69,8 @@ Winter[699,]
 PulledCoords <- Winter[!duplicated(Winter[,1]),]
 CoordChart <- ddply(PulledCoords, c('STATION'), function(x) c(Lat=x$LATITUDE, Long=x$LONGITUDE))
 
-#Get the number of snowfall records for each STATION for each year and name it RecordTotal. Note that NA is omited from the length count
+#Get the number of snowfall records for each STATION for each year and name it RecordTotal.
+#Note that NA is omitted from the length count
 WinterRecords <- ddply(Winter, .(STATION,Year), summarize, RecordTotal = length(na.omit(SNOW)))
 
 #Get the total amount of snowfall per STATION per year and name it YearlySnow
@@ -113,25 +112,26 @@ CoordChart$match <- match(CoordChart$STATION, Complete.Records$STATION, nomatch=
 CoordChart <- na.omit(CoordChart)
 
 #Combine Complete.Records and CoordChart. Make sure each STATION matches in row
-#Delete any rows that don't match. Shouldn't be any. If # of rows in Final.Values is less than # of rows in CoordChart, there is a problem (but note that # of cols does change).
+#Delete any rows that don't match. Shouldn't be any. If number of rows in Final.Values 
+#is less than number of rows in CoordChart, there is a problem (but note that # of cols does change).
 Final.Values <- cbind(Complete.Records,CoordChart)
 Final.Values$match2 <- match(Final.Values[  ,1], Final.Values[ ,5], nomatch=NA)
 Final.Values <- na.omit(Final.Values)
 dim(Final.Values)
 dim(CoordChart)
 
-#Take out unnecssary rows (2nd STATION, match, and match2) and round MeanSnow to 2 decimal places
+#Take out unnecessary rows (2nd STATION, match, and match2) and round MeanSnow to 2 decimal places
 Final.Values[,5] <- Final.Values[,8] <- Final.Values[,9] <- NULL
 ```
-8\. Make data frame to get rid of lists (in R) so can export to text file to use to load weather station points into ArcGIS and skip to Section 2.5.
+7\. Make data frame to get rid of lists (in R) so can export to text file to use to load weather station points into ArcGIS and skip to Section 2.5.
 ```{r}
 Final.Values <- as.data.frame(lapply(Final.Values,unlist))
 ```
 ```{r eval=FALSE}
 write.table(Final.Values, "MeanSnowData_95-05.txt", sep="\t", row.names=F)
 ```
-9\. Alternatively we can conduct interpolation directly in R using the steps below
-```{r message=FALSE}
+8\. Alternatively we can conduct interpolation directly in R using the steps below
+```{r message=FALSE, warning=FALSE}
 #Need to convert factors to numeric
 Final.Values$Longitude <- as.numeric(as.character(Final.Values$Long))
 Final.Values$Latitude <- as.numeric(as.character(Final.Values$Lat))
@@ -140,7 +140,7 @@ Final.Values$Latitude <- as.numeric(as.character(Final.Values$Lat))
 data.xy = Final.Values[c("Longitude","Latitude")]
 #Creates class Spatial Points for all locations
 xysp <- SpatialPoints(data.xy)
-#proj4string(xysp) <- CRS("+proj=longlat +ellps=WGS84")
+proj4string(xysp) <- CRS("+proj=longlat +ellps=WGS84")
 
 #Creates a Spatial Data Frame from 
 sppt<-data.frame(xysp)
@@ -156,54 +156,59 @@ coordinates(merge)<-sppt
 proj4string(merge) <- CRS("+proj=longlat +ellps=WGS84")
 
 #Import a county layer for study site and check projections
-counties<-readOGR(dsn=".",layer="PACountiesAlbers")
+counties<-readOGR(dsn=".",layer="PACountiesAlbers",verbose = FALSE)
 proj4string(counties)
-plot(counties)
+```
 
-#Project Weather Stations to match Counties
-Albers.crs <-CRS("+proj=aea +lat_1=29.3 +lat_2=45.3 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0")
-stations <- spTransform(merge, CRS=Albers.crs)
 
-#Plot Weather Stations over counties
-points(stations)
+```{r message=FALSE, warning=FALSE}
+EPSG <- make_EPSG()
+PAsp <- subset(EPSG, EPSG$code == "6564")
+PAsp
+
+#Copy and Paste State Plane projection into code for StatePlane below
+#Project Weather Stations and Counties to State Plane
+StatePlane <- CRS("+proj=lcc +lat_0=39.3333333333333 +lon_0=-77.75 +lat_1=40.9666666666667 +lat_2=39.9333333333333 +x_0=600000 +y_0=0 +ellps=GRS80 +units=m +no_defs +type=crs")
+
+stations <- spTransform(merge, CRS=StatePlane)
+counties <- spTransform(counties, CRS=StatePlane)
 
 stations@data$MAS <- stations@data$MeanAnnualSnowfall
+```
 
-#Create a grid onto which we will interpolate:
-xx = spsample(counties, type="regular", cellsize=10000)
-class(xx)
 
-points(xx, bg="red", cex=.5,col="red")
-
-#Convert to a SpatialPixels class
-gridded(xx) <- TRUE
-class(xx)
-
-plot(xx)
-points(stations, bg="red", cex=.5,col="red")
-
+```{r message=FALSE, warning=FALSE,eval=FALSE}
 #Plot out the MAS across the study region
 bubble(stations, zcol='MAS', fill=FALSE, do.sqrt=FALSE, maxsize=2, add=T)
+```
 
+```{r message=FALSE, warning=FALSE}
 #Create a grid onto which we will interpolate:
-#First get the range in data
- x.range <- as.integer(range(stations@coords[,1]))
- y.range <- as.integer(range(stations@coords[,2]))
+xx = spsample(stations, type="regular", cellsize=5000)
+class(xx)
 
-#Now expand to a grid with 500 meter spacing:
-grd <- expand.grid(x=seq(from=x.range[1], to=x.range[2], by=5000), y=seq(from=y.range[1], to=y.range[2], by=5000) )
+#Plot Weather Stations over counties
+plot(counties)
+points(stations)
+points(xx, bg="red", cex=.5,col="red")
+
+#Now expand to a grid with 5000 meter spacing
+x.range <- as.integer(range(xx@coords[,1]))
+y.range <- as.integer(range(xx@coords[,2]))
+
+grd <- expand.grid(x=seq(from=x.range[1]-50000, to=x.range[2]+50000, by=5000), 
+                   y=seq(from=y.range[1]-50000, to=y.range[2]+50000, by=5000))
 
 #Convert to SpatialPixel class
 coordinates(grd) <- ~ x+y
 gridded(grd) <- TRUE
-
-## test it out:
-plot(grd, cex=0.5)
-points(stations, pch=1, col='red', cex=0.7)
-title("Interpolation Grid and Sample Points")
-
-x <- krige(stations@data$MAS~1, stations, xx)
+proj4string(grd) <- StatePlane
+```
+Interpolate grid over sample points directly in R with gstat package
+```{r message=FALSE, warning=FALSE}
+x <- krige(stations@data$MAS~1, stations, grd)
 class(x)
 image(x)
 points(stations, pch=1, col='blue', cex=0.7)
 ```
+
