@@ -1,10 +1,14 @@
 ---
-title: "3.3 Distance Between Locations"
-author: "Manual of Applied Spatial Ecology"
-date: "1/21/2019"
-output: 
-  pdf_document: default
 html_document: default
+author: "Manual of Applied Spatial Ecology"
+date: "3/11/2022"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+title: "3.3 Distance Between Locations"
+editor_options: 
+  chunk_output_type: console
 ---
 Determining the distance between locations or between locations and respective habitat types can serve a variety of purposes. Several resource selection procedures require a description of the daily movement distance of an animal to determine the habitat available to an animal or when generating random locations around known locations. We will start here with a method to determine the average distance moved by mule deer in Colorado in a study to determine methods to alleviate depradation on sunflowers that have become a high commodity crop in the area.
 
@@ -26,7 +30,6 @@ muleys <-read.csv("DCmuleysedited.csv", header=T)
 #Code to select an individual animal
 muley15 <- subset(muleys, id=="D15")
 table(muley15$id)
-muley15$id <- droplevels(muley15$id)
 
 #Sort data to address error in code and then look at first 20 records of data to confirm
 muley15 <- muley15[order(muley15$GPSFixTime),]
@@ -36,7 +39,9 @@ muley15 <- muley15[order(muley15$GPSFixTime),]
 6\. Prepare data to create trajectories using the ltraj command in Adehabitat LT
 ```{r}
 ######################################################
-## Example of a trajectory of type II (time recorded) with conversion of the date to the format POSIX that nNeeds to be done to get proper digits of date into R then POSIXct uses library(chron)
+## Example of a trajectory of type II (time recorded) with conversion of the date to the 
+#format POSIX that nNeeds to be done to get proper digits of date into R then POSIXct uses
+#library(chron)
 da <- as.character(muley15$GPSFixTime)
 da <- as.POSIXct(strptime(muley15$GPSFixTime,format="%Y.%m.%d %H:%M:%S"))
 head(da)
@@ -48,7 +53,8 @@ muley15 <-muley15[-1,]
 muley15$timediff <-as.numeric(abs(timediff)) 
 
 #Clean up muley15 for outliers
-newmuleys <-subset(muley15, muley15$X > 599000 & muley15$X < 705000 & muley15$Y > 4167000 & muley15$timediff < 14401)
+newmuleys <-subset(muley15, muley15$X > 599000 & muley15$X < 705000 & muley15$Y > 4167000 
+                   & muley15$timediff < 14401)
 muley15 <- newmuleys
 ```
 7\. Create a spatial data frame of locations for muley 15 for use in creating trajectories that includes time difference between locations and dates in proper format (as.POSIXct)
@@ -94,12 +100,12 @@ return(ho>15.9&ho<23.9)
 }
 deer <- cutltraj(ltraj, "foo(date)", nextr = TRUE)
 
-#Notice that the above code will remove 345 relocations that fall
+#Notice that the above code will remove 328 relocations that fall
 #outside of your time criteria
 #Warning message:
 #In cutltraj(ltraj, "foo(date)", nextr = TRUE) :
 #  At least 3 relocations are needed for a burst
-# 345 relocations have been deleted
+# 328 relocations have been deleted
 head(deer)
 ```
 10\. Code to change ltraj to a data.frame to summarize distance between locations for each daily burst
@@ -111,9 +117,8 @@ head(dfdeer)
 dfdeer <- subset(dfdeer, !is.na(dfdeer$dist))#remove NAs from last location of a burst
 mean_dist <- do.call(data.frame, aggregate(dfdeer$dist, by=list(dfdeer$burst), 
     function(x) c(mean = mean(x), sd = sd(x), n=abs(length(x)))))
-
-#Write.table gives csv output of Summary.  Be sure to specify the directory 
-#and the output files will be stored there 
-write.table(mean, file = "Distance.csv", sep =",", row.names = TRUE, 
+head(mean_dist)
+#Write.table gives csv output of Summary 
+write.table(mean_dist, file = "Distance.csv", sep =",", row.names = TRUE, 
   col.names = TRUE, qmethod ="double")
 ```
