@@ -1,0 +1,106 @@
+---
+title: "3.2 Movement Trajectories"
+author: "Manual of Applied Spatial Ecology"
+date: "3/11/2022"
+output: 
+  pdf_document: default
+  html_document: default
+---
+We will start with simply creating trajectories between successive locations. As stated previously, there are 2 types of trajectories but their are also 2 forms of Type II trajectories if we have time recorded. Depending on the duration between locations we can have uniform time lag between successive relocations termed regular trajectories and non-uniform time lag that results in irregular trajectories. We will begin this section with simply creating irregular trajectories from relocation data because, even though we set up a time schedule to collection locations at uniform times, climate, habitat, and satellites do not always permit such schedules of data collection.
+
+1\. Exercise 3.2 - Download and extract zip folder into your preferred location
+
+2\. Set working directory to the extracted folder in R under Session - Set Working Directory...
+
+3\. Now open the script "MovementScript.Rmd" and run code directly from the script
+
+4\. First we need to load the packages needed for the exercise
+```{r warning=FALSE, message=FALSE}
+library(adehabitatLT)
+library(chron)
+library(spatstat)#for "duplicate" function
+```
+5\. We are again going to be using more of the mule deer dataset than from the earlier exercises
+```{r}
+muleys <-read.csv("DCmuleysedited.csv", header=T)
+```
+6\. Check for duplicate locations in dataset. The reason for this is very important and will be apparent shortly.
+```{r fig.height=4, fig.width=4}
+#Check for duplicate locations in dataset
+summary(duplicated(muleys))
+
+#Sort data to address error in code if needed
+#muleys <- muleys[order(muleys$id),]
+
+### Conversion of the date to the format POSIX
+#Date <- as.character(muleys$GPSFixTime)
+#Date <- as.POSIXct(strptime(as.character(muleys$GPSFixTime),"%Y.%m.%d %H:%M:%S"))
+#muleys$Date <- Date
+```
+7\. For trajectories of type II (time recorded), the conversion of the date to the format POSIX needs to be done to get proper digits of date into R.
+```{r}
+da <- as.POSIXct(strptime(muleys$GPSFixTime,format="%Y.%m.%d %H:%M:%S"))
+muleys$da <- da
+
+timediff <- diff(muleys$da)*60
+muleys <-muleys[-1,]
+muleys$timediff <-as.numeric(abs(timediff)) 
+
+newmuleys <-subset(muleys, muleys$X > 599000 & muleys$X < 705000 & muleys$Y > 4167000 
+  & muleys$timediff < 14401)
+muleys <- newmuleys
+```
+8\. Now create a Spatial Points Data Frame in UTM zone 12 adding ID, time diff, burst to xy coordinates
+```{r}
+data.xy = muleys[c("X","Y")]
+#Creates class Spatial Points for all locations
+xysp <- SpatialPoints(data.xy)
+#Creates a Spatial Data Frame from 
+sppt<-data.frame(xysp)
+#Creates a spatial data frame of ID
+idsp<-data.frame(muleys[2])
+#Creates a spatial data frame of dt
+dtsp<-data.frame(muleys[24])
+#Creates a spatial data frame of Burst
+busp<-data.frame(muleys[23])
+#Merges ID and Date into the same spatial data frame
+merge<-data.frame(idsp,dtsp,busp)
+#Adds ID and Date data frame with locations data frame
+coordinates(merge)<-sppt
+plot(merge)
+```
+\newpage
+9\. Now create an object of class "ltraj" by animal using the ID field and display by each individual (i.e., ltraj[1]).
+```{r}
+ltraj <- as.ltraj(coordinates(merge),merge$da,id=merge$id)
+head(ltraj[1])#Describes the trajectory
+plot(ltraj)#plot all trajectories created
+```
+```{r eval=FALSE}
+#Plot each trajectory separately
+plot(ltraj[1])
+plot(ltraj[2])
+plot(ltraj[3])
+plot(ltraj[4])
+plot(ltraj[5])
+plot(ltraj[6])
+plot(ltraj[7])
+```
+10\. Create a histogram of time lag (i.e., interval) and distance between successive locations for each deer. This is a nice way to inspect the time lag between locations as you don't want to include a location if too much time has passed since the previous and it also shows why a trajectory is irregular.
+```{r eval=FALSE}
+hist(ltraj[1], "dt", freq = TRUE)
+hist(ltraj[1], "dist", freq = TRUE)
+hist(ltraj[2], "dt", freq = TRUE)
+hist(ltraj[2], "dist", freq = TRUE)
+hist(ltraj[3], "dt", freq = TRUE)
+hist(ltraj[3], "dist", freq = TRUE)
+hist(ltraj[4], "dt", freq = TRUE)
+hist(ltraj[4], "dist", freq = TRUE)
+hist(ltraj[5], "dt", freq = TRUE)
+hist(ltraj[5], "dist", freq = TRUE)
+hist(ltraj[6], "dt", freq = TRUE)
+hist(ltraj[6], "dist", freq = TRUE)
+hist(ltraj[7], "dt", freq = TRUE)
+hist(ltraj[7], "dist", freq = TRUE)
+```
+
