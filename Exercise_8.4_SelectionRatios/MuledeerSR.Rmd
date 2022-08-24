@@ -1,0 +1,88 @@
+---
+title: "8.4 Selection Ratios"
+author: "Manual of Applied Spatial Ecology"
+date: "3/11/2022"
+output: 
+  pdf_document: default
+  html_document: default
+editor_options: 
+  chunk_output_type: console
+---
+We are going to focus the remainder of this chapter on Selection Ratios and Resource Selection Functions (RSFs) because Selection Ratios identify a general use of habitat given what is available that can be further explored and studied through use of RSFs. Resource Selection Functions are spatially-explicit models that predict the (relative) probability of use by an animal at a given area/location during a given time, based on the environmental conditions that influence or account for selection. There are numerous types of RSFs that can be performed based on the availability of data collected during the study and there are volumes of literature devoted to the topic of resource selection and sampling designs for radiotelemetry studies (Manly et al. 2002, Cooper and Millspaugh 2001, Erickson et al. 2001, Leban et al. 2001).
+
+Selection Ratio basic functions
+
+widesI may be used to explore resource selection by animals when designs I occur (i.e., habitat use and availability are measured at the population level because individual animals are not identified). The Manly selectivity measure (selection ratio = used/available) is computed and preference/avoidance is tested for each habitat, and the differences between selection ratios are computed and tested (Manly et al. 2002).
+
+widesII computes the selection ratios with design II data (i.e., the same availability for all animals, but use is measured for each one). An example would be to place a minimum convex polygon around all animal locations throughout a study site and define this as "available" to all animals.
+
+widesIII computes the selection ratios for design III data (i.e., use and the availability are measured for each animal with use and availability unique to each individuals movements and habitat use). 
+
+Note that all these methods rely on the following hypotheses: (i) independence between animals, and (ii) all animals are selecting habitat in the same way (in addition to "traditional" hypotheses in these kinds of studies: no territoriality, all animals having equal access to all available resource units, etc. (Manly et al. 2002).
+
+1\. Exercise 8.3 - Download and extract zip folder into your preferred location
+
+2\. Set working directory to the extracted folder in R under Session - Set Working Directory...
+
+3\. Now open the script MuleDeerSR.Rmd" and run code directly from the script
+
+4\. First we need to load the packages needed for the exercise
+```{r warning=FALSE, message=FALSE}
+library(adehabitatHS)
+```
+5\. Load the mule deer dataset we used in the previous exercise with 5 habitat categories:
+1 = Sunflower,summer crops, random crops, grassland
+2 = Winter crops
+3 = Alfalfa
+4 = Forest
+5 = Shrubland
+```{r}
+MDsr <- read.csv("MD_winter12.csv",header=T)
+#Remove deer that cause errors in plot function later
+MDsr <- subset(MDsr,MDsr$animal_id !="647579A")
+MDsr$animal_id <- factor(MDsr$animal_id)
+used <- subset(MDsr, MDsr$use == 1)
+used <- used[c(-1,-3:-6,-8:-15)]
+used <- xtabs(~used$animal_id + used$crop, used)
+used <- as.data.frame.matrix(used[1:13, 1:5])
+
+rand <- subset(MDsr, MDsr$use == 0)
+rand <- rand[c(-1,-3:-6,-8:-16)]
+rand <- xtabs(~rand$animal_id + rand$crop, rand)
+rand <- as.data.frame.matrix(rand[1:13, 1:5])
+
+# PVT Code for VegRSF #
+pvt.W <- widesIII(used,rand,avknown = FALSE, alpha = 0.1)
+pvt.W
+plot(pvt.W)
+```
+Next we will run on distance to road binned into 10 categories
+```{r}
+#Now run on distance to roads binned into 10 categories
+MDsr_road <- read.csv("MD_winter12.csv",header=T)
+#Delete deer that have limited data and will result in errors in code below
+MDsr_road <- subset(MDsr_road,MDsr_road$animal_id !="647582A" & MDsr_road$animal_id 
+!="647584A" & MDsr_road$animal_id !="647572A" & MDsr_road$animal_id !="647574A" &
+MDsr_road$animal_id !="647593A" )
+MDsr_road$animal_id <- factor(MDsr_road$animal_id)
+
+#Bin roads into 4 categories instead of 10
+MDsr_road$NewRoad <- as.factor(MDsr_road$BinRoad)
+levels(MDsr_road$NewRoad)<-list(class1=c("0-200","200-400"), class2=c("400-600","600-800"),
+class3=c("800-1000","1000-12000","1200-1400"),class4=c("1400-1600","1600-1800","1800-2000"))
+
+used_road <- subset(MDsr_road, MDsr_road$use == 1)
+used_road <- used_road[c(-1:-6,-8:-15)]
+used_road <- xtabs(~used_road$animal_id + used_road$NewRoad, used_road)
+used_road <- as.data.frame.matrix(used_road[1:9, 1:4])
+
+rand_road <- subset(MDsr_road, MDsr_road$use == 0)
+rand_road <- rand_road[c(-1:-6,-8:-15)]
+rand_road <- xtabs(~rand_road$animal_id + rand_road$NewRoad, rand_road)
+rand_road <- as.data.frame.matrix(rand_road[1:9, 1:4])
+
+pvt.road <- widesIII(used_road,rand_road,avknown = FALSE, alpha = 0.1)
+pvt.road
+plot(pvt.road)
+```
+
