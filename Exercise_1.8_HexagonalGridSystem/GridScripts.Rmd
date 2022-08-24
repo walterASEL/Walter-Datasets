@@ -1,10 +1,12 @@
 ---
 title: "1.8 Creating a Hexagonal Polygon Grid Over a Study Area"
 author: "Manual of Applied Spatial Ecology"
-date: "1/21/2018"
+date: "3/11/2022"
 output: 
   pdf_document: default
   html_document: default
+editor_options: 
+  chunk_output_type: console
 ---
 1\. Exercise 1.8 - Download and extract zip folder into your preferred location
 
@@ -19,13 +21,12 @@ library(rgeos)
 library(raster)
 ```
 5\. Now let's have a separate section of code to include projection information we will use throughout the exercise. In previous versions, these lines of code were within each block of code
-```{r}
+```{r warning=FALSE, message=FALSE}
 crs<-"+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
-Albers.crs <-CRS("+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 
-  +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs")
+Albers.crs <-CRS("+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")
 ```
 6\. Also need to import several shapefiles for mule deer from Section 1.3
-```{r hide=TRUE}
+```{r warning=FALSE, message=FALSE, hide=TRUE}
 study.counties<-readOGR(dsn=".",layer="MDcounties", verbose = FALSE)
 class(study.counties)#Shows class and package used
 proj4string(study.counties)#Shows projection information
@@ -43,7 +44,7 @@ newmuleys <-subset(muleys, muleys$Long > -110.50 & muleys$Lat > 37.8 & muleys$Lo
 muleys <- newmuleys
 ```
 7\. Identify the columns with coordinates then make a spatial data frame of locations after removing outliers
-```{r fig.height=4, fig.width=4}
+```{r fig.height=4, fig.width=4, warning=FALSE, message=FALSE}
 coords<-data.frame(x = muleys$Long, y = muleys$Lat)
 head(coords)
 plot(coords)
@@ -55,7 +56,7 @@ points(deer.spdf,col="red")
 ```
 \newline
 8\. Rename labels by county name otherwise plot order would be used because duplicate counties within each state (i.e., CO, UT) occured in original shapefile from ArcMap
-```{r fig.height=4, fig.width=4}
+```{r fig.height=4, fig.width=4, warning=FALSE, message=FALSE}
 row.names(study.counties)<-as.character(study.counties$StateCO)
 names.polygons<-sapply(study.counties@polygons, function(x) slot(x,"ID")) 
 #Now add labels of State and County to Map
@@ -65,7 +66,7 @@ text(coordinates(study.counties), labels=sapply(slot(study.counties, "polygons")
 ```
 \newline
 9\. Now lets extract counties within the extent of the mule deer locations
-```{r fig.height=4, fig.width=4}
+```{r fig.height=4, fig.width=4, warning=FALSE, message=FALSE}
 int <- gIntersection(study.counties,deer.spdf)#requires rgeos library
 clipped <- study.counties[int,]
 MDclip <- as(clipped, "SpatialPolygons")
@@ -76,15 +77,15 @@ text(coordinates(MDclip), labels=sapply(slot(MDclip, "polygons"),
 bbox(MDclip)
 ```
 10\. We also can create a hexagonal grid across the study site
-```{r fig.height=4, fig.width=4}
+```{r fig.height=4, fig.width=4, warning=FALSE, message=FALSE}
 HexPts <-spsample(MDclip,type="hexagonal", n=1000, offset=c(0,0))
 HexPols <- HexPoints2SpatialPolygons(HexPts)
-proj4string(HexPols) <- CRS(crs)
+#proj4string(HexPols) <- CRS(crs)
 plot(HexPols)
 ```
 \newline
 11\. Create this hexagonal grid across our study site by zooming into deer locations from Section 1.3
-```{r hide=TRUE, fig.height=4, fig.width=4}
+```{r hide=TRUE, fig.height=4, fig.width=4, warning=FALSE, message=FALSE}
 #Import the study site zoomed in shapefile
 study.zoom<-readOGR(dsn=".",layer="MDzoom")
 plot(study.zoom,pch=16)
@@ -126,7 +127,7 @@ text(coordinates(HexPols2), labels=sapply(slot(HexPols2, "polygons"),
 ```
 \newline
 14\. As an alternative to importing a polygon that we created in ArcMap, we can create a polygon in R using the coordinates of the boundary box of the area of interest. In our case here, the bounding box will be the mule deer locations.
-```{r fig.height=4, fig.width=4}
+```{r fig.height=4, fig.width=4, warning=FALSE, message=FALSE}
 proj4string(deer.spdf)
 bbox(deer.spdf@coords)
 bb <- cbind(x=c(-108.83966,-108.83966,-108.9834,-108.9834, -108.83966), 
@@ -144,12 +145,12 @@ veg <-raster("extentnlcd2.txt")
 plot(veg)
 class(veg)
 ```
-```{r eval=FALSE}
+```{r eval=FALSE, warning=FALSE, message=FALSE}
 #Clip using the raster imported with "raster" package
 bbclip <- crop(veg, SP)
 veg
 ```
-```{r}
+```{r warning=FALSE, message=FALSE }
 #WON'T WORK because projections are not the same, WHY?
 #Let's check projections of layers we are working with now.
 proj4string(MDclip)
@@ -158,7 +159,7 @@ proj4string(SP)
 proj4string(veg)
 ```
 16\. We need to have all layers in same projection so project the deer.spdf to Albers and then clip vegetation layer with new polygon we created in the Albers projection.
-```{r}
+```{r warning=FALSE, message=FALSE}
 deer.albers <-spTransform(deer.spdf, CRS=Albers.crs)
 class(deer.albers)
 proj4string(deer.albers)
