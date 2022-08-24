@@ -1,10 +1,12 @@
 ---
 title: "1.9 Creating a Square Polygon Grid Over a Study Area"
 author: "Manual of Applied Spatial Ecology"
-date: "1/16/2018"
+date: "3/11/2022"
 output: 
   pdf_document: default
   html_document: default
+editor_options: 
+  chunk_output_type: console
 ---
 ```{r include=FALSE}
 library(knitr)
@@ -18,21 +20,21 @@ opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
 
 4\. First we need to load the packages needed for the exercise
 ```{r warning=FALSE, message=FALSE}
-library(sp)
 library(raster)
 library(adehabitatMA)
 ```
 5\. Now let's have a separate section of code to include projection information we will use throughout the exercise. In previous versions, these lines of code were within each block of code
-```{r}
+```{r warning=FALSE, message=FALSE}
 crs<-"+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 Albers.crs <-CRS("+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 
   +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs")
 crs2<-"+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96
   +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
-#NOTE the difference between crs and Albers.crs with one used to define and the other to project, respectively.
+#NOTE: The difference between crs and Albers.crs is one
+#is used to define projection that and the other to project a layer, respectively.
 ```
 6\. We need to have all layers in same projection so import, create, and remove outliers for mule deer locations then project all to the Albers projection as we did previously.
-```{r}
+```{r warning=FALSE, message=FALSE}
 muleys <-read.csv("muleysexample.csv", header=T)
 summary(muleys$id)
 
@@ -51,16 +53,17 @@ proj4string(deer.spdf)
 deer.albers <-spTransform(deer.spdf, CRS=Albers.crs)
 proj4string(deer.albers)
 bbox(deer.albers)
+plot(deer.albers,axes=T)
 ```
 7\. Create points for x and y from the bounding box of all mule deer locations with 1500 m spacing between each point.
-```{r}
+```{r warning=FALSE, message=FALSE}
 plot(deer.albers)
 #Create vectors of the x and y points 
 x <- seq(from = -1127964, to = -1115562, by = 1500) 
 y <- seq(from = 1718097, to = 1724867, by = 1500)
 ```
 8\. Create a grid of all pairs of coordinates (as a data.frame) using the "expand grid" function and then make it a gridded object.
-```{r}
+```{r warning=FALSE, message=FALSE}
 xy <- expand.grid(x = x, y = y)
 class(xy)
 
