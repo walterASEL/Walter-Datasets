@@ -1,0 +1,122 @@
+---
+html_document: default
+author: "Manual of Applied Spatial Ecology"
+date: "3/11/2022"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+title: "3.5 Regular Trajectories"
+editor_options: 
+  chunk_output_type: console
+---
+1\. Exercise 3.5 - Download and extract zip folder into your preferred location
+
+2\. Set working directory to the extracted folder in R under Session - Set Working Directory...
+
+3\. Now open the script "RegTrajScript.Rmd" and run code directly from the script
+
+4\. First we need to load the packages needed for the exercise
+```{r warning=FALSE,message=FALSE}
+library(adehabitatLT)
+library(chron)
+library(sp)
+```
+5\. Now read in dataset, extract a single animal and create ltraj as in previous exercise
+```{r fig.height=4, fig.width=4}
+muleys <-read.csv("DCmuleysedited.csv", header=T)
+
+#CODE FOR AN INDIVIDUAL ANIMAL
+muley15 <- subset(muleys, id=="D15")
+muley15$id <- factor(muley15$id)
+table(muley15$id)
+
+#Sort data to address error in code and then look at first 10 records of data to confirm
+muley15 <- muley15[order(muley15$GPSFixTime),]
+
+######################################################
+## Example of a trajectory of type II (time recorded)
+### Conversion of the date to the format POSIX
+#Needs to be done to get proper digits of date into R then POSIXct
+#uses library(chron)
+da <- as.character(muley15$GPSFixTime)
+da <- as.POSIXct(strptime(muley15$GPSFixTime,format="%Y.%m.%d %H:%M:%S"))
+#Attach da to muley15
+muley15$da <- da
+
+timediff <- diff(muley15$da)
+muley15 <-muley15[-1,]
+muley15$timediff <-as.numeric(abs(timediff)) 
+
+#Clean up muley15 for outliers
+newmuleys <-subset(muley15, muley15$X > 599000 & muley15$X < 705000 & muley15$Y > 4167000
+  & muley15$timediff < 14401)
+muley15 <- newmuleys
+
+data.xy = muley15[c("X","Y")]
+#Creates class Spatial Points for all locations
+xysp <- SpatialPoints(data.xy)
+#Creates a Spatial Data Frame from 
+sppt<-data.frame(xysp)
+#Creates a spatial data frame of ID
+idsp<-data.frame(muley15[2])
+#Creates a spatial data frame of dt
+dtsp<-data.frame(muley15[24])
+#Creates a spatial data frame of Burst
+busp<-data.frame(muley15[23])
+#Merges ID and Date into the same spatial data frame
+merge<-data.frame(idsp,dtsp,busp)
+#Adds ID and Date data frame with locations data frame
+coordinates(merge)<-sppt
+plot(merge)
+
+#Creation of an object of class "ltraj"
+ltraj <- as.ltraj(coordinates(merge),merge$da,id=merge$id)
+plot(ltraj)
+```
+\newline
+6\.We want to study the trajectory of the day at the scale of the day. We define one trajectory 
+per day. The trajectory should begin at 2200 hours so the following function returns TRUE if
+the date is time between 06H00 and 23H00 (i.e. results in 7-8 locations/day bursts)
+```{r fig.height=4, fig.width=4}
+foo <- function(date) {
+da <- as.POSIXlt(date)
+ho <- da$hour + da$min
+return(ho>18.0&ho<23.9)
+}
+deer <- cutltraj(ltraj, "foo(date)", nextr = TRUE)
+head(deer)
+
+## Remove the first and last burst if needed?
+#deer2 <- deer[-c(1,length(deer))]
+
+#Bind the trajectories
+deer3 <- bindltraj(deer)
+deer3
+plot(deer3)
+is.regular(deer3)
+plotltr(deer3, "dt")
+
+## The relocations have been collected every 3 hours, and there are some
+## missing data
+## The reference date: the hour should be exact (i.e. minutes=0):
+refda <- strptime("00:00", "%H:%M")
+refda
+## Set the missing values
+deerset <- setNA(deer3, refda, 3, units = "hour")
+## now, look at dt for the bursts:
+plotltr(deerset, "dt")
+## dt is nearly regular: round the date:
+deerset1 <- sett0(deerset, refda, 3, units = "hour")
+plotltr(deerset1, "dt/3600")
+is.regular(deerset1)
+## deerset1 is now regular
+
+## Is the resulting object "sd" ?
+is.sd(deerset1)
+
+
+#Show the changes in the distance between successive relocations with the time
+plotltr(deerset1, "dist")
+deerset1#Is the trajectory regular now?
+```
