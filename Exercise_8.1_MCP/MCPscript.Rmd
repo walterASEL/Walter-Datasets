@@ -1,0 +1,70 @@
+---
+title: "8.1 Minimum Convex Polygon (MCP)"
+author: "Manual of Applied Spatial Ecology"
+date: "3/11/2022"
+output: 
+  pdf_document: default
+  html_document: default
+editor_options: 
+  chunk_output_type: console
+---
+Minimum Convex Polygon (MCP) estimation was considered a home range originally described for use with identifying animals recaptured along a trapping grid (Mohr 1947). The reason we removed this from the Home Range Section is because MCP can be used to describe the extent of distribution of locations of an animal but NOT as an estimation of home range size. In fact, reporting size of home range using MCP should be avoided at all costs unless you can justify its use as opposed to the plethora of other estimators we have learned in the previous section. We may use MCP within resource selection function analysis as it has been suggested as a method to describe the extent of area occupied by a species that would be available to animals using either second or third order selection of habitat (Johnson 1980), although this should also be avoided unless specifically justified as to why MCP is better than an alternate home range estimator. The extent of an area an animal uses (i.e., habitat available) should be determined for each species and the most appropriate estimator should be used.
+
+1\. Exercise 8.1 - Download and extract zip folder into your preferred location
+
+2\. Set working directory to the extracted folder in R under Session - Set Working Directory...
+
+3\. Now open the script "MCPscript.Rmd" and run code directly from the script
+
+4\. First we need to load the packages needed for the exercise
+```{r warning=FALSE, message=FALSE}
+library(adehabitatHR)
+library(rgdal)
+```
+5\. Now we will have a separate section of code to include projection information we will use throughout the exercise. In previous versions, these lines of code were within each block of code
+```{r warning=FALSE, message=FALSE}
+utm17.crs <- CRS("+proj=utm +zone=17N +ellps=WGS84")
+```
+6\. Load in a mule deer dataset we have used in previous exercises
+```{r}
+muleys <-read.csv("muleysexample.csv", header=T)
+newmuleys <-subset(muleys, muleys$Long > -110.90 & muleys$Lat > 37.8)
+muleys <- newmuleys
+newmuleys <-subset(muleys, muleys$Long < -107)
+muleys <- newmuleys
+```
+7\. Create Spatial Points for all relocations and assign IDs to each location
+```{r}
+data.xy = muleys[c("X","Y")]
+#Creates class Spatial Points for all locations
+xysp <- SpatialPoints(data.xy)
+proj4string(xysp) <- CRS("+proj=utm +zone=17 +ellps=WGS84")
+
+#Creates a Spatial Data Frame from 
+sppt<-data.frame(xysp)
+#Creates a spatial data frame of ID
+idsp<-data.frame(muleys[2])
+#Merges ID and Date into the same spatial data frame
+merge<-data.frame(idsp)
+#Adds ID and Date data frame with locations data frame
+coordinates(merge)<-sppt
+```
+8\. We are now ready to create MCPs for our new dataset "merge" by individual animal ID (Fig. 8.1).
+```{r}
+cp <- mcp(merge[,1], percent=95)#(95% is the default)
+## The size of the bounding polygon
+as.data.frame(cp)
+## Plot the home ranges
+plot(cp)
+## ... And the relocations
+plot(merge, add=TRUE)
+```
+9\. Use the rgdal package to write to a shapefile
+```{r eval=FALSE}
+writeOGR(cp, dsn = ".", layer="MCPhomerange", driver = "ESRI Shapefile")
+```
+10\. We have chosen to exclude 5% of the most extreme relocations, but we could have made another choice. We may compute the MCP for various choices of the number of extreme relocations to be excluded, using the function mcp.area: 
+```{r}
+hrs <- mcp.area(merge[,1], percent=seq(50, 100, by = 5))
+hrs
+```
