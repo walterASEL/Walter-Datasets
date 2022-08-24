@@ -1,0 +1,91 @@
+---
+title: "4.7 Characteristic Hull Polygons (CHP)"
+author: "Manual of Applied Spatial Ecology"
+date: "3/11/2022"
+output: 
+  pdf_document: default
+html_document: default
+---
+Now we are going to get into another class of home range estimators that use polygons created by Delaunay triangulation of a set of relocations and then removing a subset of the resulting triangles. These polygons can have concave edges, be composed of disjoint regions, and contain empty portions of unused space within hull interiors. This estimator has been described in the adehabitatHR package and evaluated on black-footed albatross (Phoebastria nigripes; Downs and Horner 2009). Polygon-based estimators may be a useful method for a variety of species but research has been limited.
+
+1\. Exercise 4.7 - Download and extract zip folder into your preferred location
+
+2\. Set working directory to the extracted folder in R under Session - Set Working Directory...
+
+3\. Now open the script "CHPscript.Rmd" and run code directly from the script
+
+4\. First we need to load the packages needed for the exercise
+```{r warning=FALSE, message=FALSE}
+library(adehabitatHR)
+library(maptools)
+```
+5\. Now let's have a separate section of code to include projection information we will use throughout the exercise. In previous versions, these lines of code were within each block of code
+```{r}
+utm17.crs <- CRS("+proj=utm +zone=17N +ellps=WGS84")
+```
+6\. Load panther dataset
+```{r warning=FALSE, message=FALSE}
+#Creates a Spatial Points Data Frame for 2 animals by ID
+twocats <-read.csv("pantherjitter.csv", header=T)
+data.xy = twocats[c("X","Y")]
+
+#Creates class Spatial Points for all locations
+xysp <- SpatialPoints(data.xy)
+proj4string(xysp) <- CRS("+proj=utm +zone=17N +ellps=WGS84")
+
+#Creates a Spatial Data Frame from 
+sppt<-data.frame(xysp)
+
+#Creates a spatial data frame of ID
+idsp<-data.frame(twocats[1])
+
+#Merges ID data frame with GPS locations data frame
+#Data frame is called "idsp" comparable to the "relocs" from puechabon dataset
+coordinates(idsp)<-sppt
+
+head(as.data.frame(idsp))
+
+#Results for above code
+
+#Home Range estimation
+res <- CharHull(idsp[,1])
+class("res")
+
+#Displays the home range
+plot(res)
+
+#Computes the home range size for 20-100 percent
+MCHu2hrsize(res)
+
+#OR
+
+#Computes the home range size for 95 percent
+MCHu2hrsize(res, percent=95)
+
+#OR use
+
+ver <- getverticeshr(res, percent=90)
+ver
+plot(ver)
+
+ver50 <- getverticeshr(res, percent=50)
+ver80 <- getverticeshr(res, percent=80)
+ver90 <- getverticeshr(res, percent=90)
+ver95 <- getverticeshr(res, percent=95)
+plot(ver95)
+plot(ver90, add=TRUE, col="blue")
+plot(ver80, add=TRUE, col="red")
+plot(ver50, add=T, col="green")
+
+#The object uu below is the single-linkage cluster analysis that estimates
+#home range returned as a list of SpatialPolygonDataFrame objects (one per animal)
+
+uu <- clusthr(idsp)
+class(uu)
+#[1] "MCHu"
+
+plot(uu, percent=95)
+
+#Returns home range of Cat143 and 95% HR
+plot(uu[[1]][250,], add=T, col="green")
+```
