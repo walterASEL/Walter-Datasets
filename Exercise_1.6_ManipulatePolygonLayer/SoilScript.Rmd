@@ -1,0 +1,116 @@
+---
+title: "1.6 Manipulate Polygon Layer"
+author: "Manual of Applied Spatial Ecology"
+date: "3/11/2022"
+output: 
+  pdf_document: default
+  html_document: default
+editor_options: 
+  chunk_output_type: console
+---
+1\. Exercise 1.6 - Download and extract zip folder into your preferred location
+
+2\. Set working directory to the extracted folder in R under Session - Set Working Directory...
+
+3\. Now open the script "SoilScript.Rmd" and run code directly from the script
+
+4\. First we need to load the packages needed for the exercise
+```{r warning=FALSE, message=FALSE}
+library(rgdal)
+library(maptools)
+library(foreign)
+```
+
+
+```{r , message=FALSE, warning=FALSE}
+soils<-readOGR(dsn=".",layer="Soil_Properties",verbose=FALSE)
+plot(soils)
+names(soils) #get attribute data
+
+#Rename original category headings to something more familiar
+soils$Clay <- soils$SdvOutpu_1
+soils$pH <- soils$SdvOutpu_2
+soils$CEC <- soils$SdvOutpu_3
+```
+
+
+```{r eval=FALSE}
+#Shapefiles contain several slots which can be called with the "@" symbol or slot(object, "data")
+soils@data[1:10,] #a data frame with n observations associated with X covariates,
+#soils@polygons #the number of polygons that the shapefile consists of
+soils@plotOrder #the order of the polygons
+soils@bbox #boundary box
+soils@proj4string #projection
+#Within the slot
+soils@polygons[[1]] #will bring up the first polygon
+soils@polygons[[1]]@area #will bring up the area for the first polygon
+soils@polygons[[1]]@ID #will retrieve the ID of the first polygon
+soils@polygons[[1]]@plotOrder #will retrieve the order of the first polygon
+```
+5\. Select portions of the data that fit some set criteria
+```{r}
+#Highlights the areas that Percent Clay polygons are over 30%
+plot(soils)
+high.clay<- soils[soils$Clay>30,]
+plot(high.clay, border="red", add=TRUE)
+
+##Highlights the areas that Cation Exchange Capacity is greater than 14
+high.CEC<- soils[soils$CEC>14,]
+plot(high.CEC, border="green", add=TRUE)
+
+##Highlights the areas that soil pH is greater than 8
+high.pH <- soils[soils$pH>8,]
+plot(high.pH, border="yellow", add=TRUE)
+```
+6\. Bring in locations of harvested mule deer
+
+```{r}
+#Import mule deer locations from harvested animals tested for CWD
+#Note: Locations have been offset or altered so do not reflect actual locations of samples
+mule <- read.csv("MDjitterclip.csv", header=T)
+
+coords<-data.frame(x = mule$x, y = mule$y)
+crs<-"+proj=utm +zone=13 +datum=WGS84 +no_defs +towgs84=0,0,0"
+
+plot(coords, col="blue")
+#par(new=TRUE)
+```
+7\. Let's generate random points with the extent of the soil layer
+```{r}
+#Sampling points in a Spatial Object "type=regular" will give a regular grid
+samples<-spsample(soils, n=1000, type="random")
+
+plot(soils, col="wheat")
+points(coords, col="blue")
+points(samples, col="red")
+```
+8\. Creates a SpatialPoints object from the location coordinates
+```{r}
+samples@bbox <- soils@bbox
+samples@proj4string <- soils@proj4string
+```
+9\. Extract and tally Clay soil types for random samples and mule deer locations
+```{r}
+#Matches points with polygons:
+soils.idx<- over(samples,soils)
+locs <- SpatialPoints(coords)
+locs@proj4string <- soils@proj4string
+soils.locs<- over(locs, soils)
+
+#Tally clay soil types for random samples
+obs.tbl <- table(soils.idx$Clay[soils.idx$Clay])
+obs.tbl
+
+#Also tally soil types for each mule deer sampled
+obs.tbl2 <- table(soils.locs$Clay[soils.locs$Clay])
+obs.tbl2
+```
+10\. Converts the counts to proportions
+```{r}
+obs <- obs.tbl/sum(obs.tbl)
+obs
+
+obs2 <- obs.tbl2/sum(obs.tbl2)
+obs2
+```
+
