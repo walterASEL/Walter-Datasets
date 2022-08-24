@@ -1,10 +1,12 @@
 ---
 title: "1.7 Manipulate Raster Data Layer"
 author: "Manual of Applied Spatial Ecology"
-date: "1/10/2018"
+date: "3/11/202"
 output: 
   pdf_document: default
   html_document: default
+editor_options: 
+  chunk_output_type: console
 ---
 1\. Exercise 1.7 - Download and extract zip folder into your preferred location
 
@@ -24,12 +26,13 @@ library(rgdal)
 library(maptools)
 ```
 5\. Now let's have a separate section of code to include projection information we will use throughout the exercise. In previous versions, these lines of code were within each block of code
-```{r}
+```{r warning=FALSE, message=FALSE}
 #CRS of shapefile layers
 crs <- CRS("+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 
   +y_0=0 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0")
 #CRS of raster layers
-crs2 <- "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+crs2 <- CRS("+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 
+  +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs")
 utm.crs<-"+proj=utm +zone=17N +ellps=WGS84"
 ```
 6\. Alternatively, you can set your working directory by opening a previously saved workspace by double clicking it in that folder which will also serve to set that folder as the working directory. All of the raster layers we are going to use will be located here
@@ -39,7 +42,7 @@ Note: Most of the exercises that follow are exploratory in nature and not the re
 7\. If you have troubles getting a raster to Ascii in ArcMap to actually show up as an Ascii file there is good reason. We need to rename the text file by replacing ".txt" with ".asc" in Windows Explorer. ArcMap will not save as an ".asc" file and I have no idea why!
 
 8\. Here is some code to import Ascii files (i.e., rasters) from ArcMap into R using one of several packages. Ascii files can be categorical (Vegetation/Habitat categories) or numeric (DEMs). Because adehabitat package has been discontinued, we will skip this section and move on to step 9. 
-```{r}
+```{r warning=FALSE, message=FALSE}
 #Import raster as text using the "raster" package 
 r <-raster("polyascii2.txt")
 proj4string(r)#Note: No projection information was imported with the raster
@@ -51,52 +54,52 @@ r
 proj4string(r)
 ```
 ```{r eval=FALSE}
-#Import raster as an Ascii files (factor) using "adehabitat" package if available for 
+#Import raster as an Ascii file (factor) using "adehabitat" package if available for 
 #file1, file2, and file3 in the 3 sections of code below:
 #Path of the file to be imported
-file1 <-  paste("polyextract2.asc", sep = "\\")
-levelfile <- paste("TableExtract.txt", sep = "\\")
-asp <- import.asc(file1, lev = levelfile, type = "factor")
-image(asp)
-asp
-
-#Now let's look at the vegetation categories of the file
-ta <- table(as.vector(asp))
-names(ta) <- levels(asp)[as.numeric(names(ta))]
-ta
-
-file2 <-  paste("polyclip.asc", sep = "\\")
-levelfile2 <- paste("TableClip.txt", sep = "\\")
-asp2 <- import.asc(file2, lev = levelfile2, type = "factor")
-image(asp2)
-asp2
-
-#Shows 7 vegetation categories
-
-#Now let's look at the vegetation categories of the file
-ta2 <- table(as.vector(asp2))
-names(ta2) <- levels(asp2)[as.numeric(names(ta2))]
-ta2
+# file1 <-  paste("polyextract2.asc", sep = "\\")
+# levelfile <- paste("TableExtract.txt", sep = "\\")
+# asp <- import.asc(file1, lev = levelfile, type = "factor")
+# image(asp)
+# asp
+# 
+# #Now let's look at the vegetation categories of the file
+# ta <- table(as.vector(asp))
+# names(ta) <- levels(asp)[as.numeric(names(ta))]
+# ta
+# 
+# file2 <-  paste("polyclip.asc", sep = "\\")
+# levelfile2 <- paste("TableClip.txt", sep = "\\")
+# asp2 <- import.asc(file2, lev = levelfile2, type = "factor")
+# image(asp2)
+# asp2
+# 
+# #Shows 7 vegetation categories
+# 
+# #Now let's look at the vegetation categories of the file
+# ta2 <- table(as.vector(asp2))
+# names(ta2) <- levels(asp2)[as.numeric(names(ta2))]
+# ta2
 
 #NOTE: R won't recognize double digit veg categories
 #Import raster as an Ascii files (factor) using:
 #Path of the file to be imported
-file3 <-  paste("polyascii2.asc")
-levelfile3 <- paste("TableCode.txt")
-asp3 <- import.asc(file3, lev = levelfile3, type = "factor")
-image(asp3)
-asp3
+# file3 <-  paste("polyascii2.asc")
+# levelfile3 <- paste("TableCode.txt")
+# asp3 <- import.asc(file3, lev = levelfile3, type = "factor")
+# image(asp3)
+# asp3
 
 #Now let's look at the vegetation categories of the file
-ta3 <- table(as.vector(asp3))
-names(ta3) <- levels(asp3)[as.numeric(names(ta3))]
-ta3
+# ta3 <- table(as.vector(asp3))
+# names(ta3) <- levels(asp3)[as.numeric(names(ta3))]
+# ta3
 
 #Or we can also use the "adehabitat" package to import DEM
-fileElev <-  paste("demascii.asc")
-elev <- import.asc(fileElev)
-image(elev)
-elev
+# fileElev <-  paste("demascii.asc")
+# elev <- import.asc(fileElev)
+# image(elev)
+# elev
 ```
 9\. We will primarily be using the "rgdal" package to import an ascii grid as a Spatial Grid Data Frame
 ```{r}
@@ -108,7 +111,7 @@ image(habitat)
 ```
 \newline
 10\. Now let's add some shapefiles to our raster
-```{r hide=TRUE}
+```{r warning=FALSE, message=FALSE, hide=TRUE}
 #Load county shapefile
 county<-readOGR(dsn=".",layer="BeaufortCoAlbers", verbose = FALSE)
 proj4string(county)
@@ -185,15 +188,14 @@ bvspdf <- SpatialPointsDataFrame(coords= coords, data = bv49, proj4string = CRS(
 plot(bvspdf, col="red")
 #NOTE: Locations must be assigned to the UTM coordinate system prior to projection to Albers 
 #so won't overlay on veg layer at this point because veg is in Albers
-bv49Albers <-spTransform(bvspdf, CRS(crs2))
+bv49Albers <-spTransform(bvspdf, CRS=crs2)
 class(bv49Albers)
 proj4string(bv49Albers)
 bv49Albers[1:5,]
 points(bv49Albers, col="red")
-#Determine which of those points lie within a cell that contains data by using the extract function. The extract function will extract 
-#covariate information from the raster at a particular 
-#the xy coordinates for the location.
-veg.survey<-extract(rc1, bv49Albers)
+#Determine which of those points lie within a cell that contains data by using the extract function. 
+#The extract function will extract covariate information from the raster at a particular the xy coordinates for the location.
+veg.survey<-extract(clip, bv49Albers)
 veg.survey<-subset(bv49Albers,!is.na(veg.survey))
 plot(veg.survey, col="black")
 ```
@@ -220,7 +222,9 @@ points(coords2, bg="red", cex=.5,col="blue")
 veg.sample<-extract(rc1, coords2)
 head(veg.sample)
 veg.sample<-subset(coords2,!is.na(veg.sample))
-points(veg.sample,col="red")
+str(veg.sample)
+head(veg.sample)
+plot(veg.sample,col="red")
 ```
 \newline
 15\. We can also do the same using the clipped vegetation raster to be more in line with vulture locations or using the reclassified vegetation categories. For each locations, we can determine if a locations lies within a cell that contains data by using the extract function and this will extract covariate information from the raster at a each location.
@@ -250,5 +254,13 @@ head(clip.sample)
 clip.sample<-subset(coords3,!is.na(clip.sample))
 points(clip.sample, cex=.5, col="red")
 points(bv49Albers)
+```
+New code addition below (Update 1/7/2021) to use mapview package to treat plotting data layers as done with GIS software. This package enables user to zoom in and out and scroll around layer after calling a plot function
+\newpage
+```{r eval=FALSE}
+library(mapview)
+mapview(clip)
+mapview(polys) + mapview(bv49Albers, color="yellow")
+mapview(polys) + bv49Albers + polys4
 ```
 
