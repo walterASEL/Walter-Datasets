@@ -1,10 +1,12 @@
 ---
 title: "2.5 Importing Dynamically Downscaled Global Climate Data"
 author: "Manual of Applied Spatial Ecology"
-date: "1/18/2018"
+date: "3/11/2022"
 output: 
   pdf_document: default
   html_document: default
+editor_options: 
+  chunk_output_type: console
 ---
 This exercise will provide some code for manipulating climate change data from the Regional Climate Downscaling by copy the link into your browser:
 http://regclim.coas.oregonstate.edu/data-access/index.html or just select the link here: [Regional Climate Downscaling](http://regclim.coas.oregonstate.edu/data-access/index.html)
@@ -35,13 +37,14 @@ print(paste(tmin$name)) #in this case the 'field name' is TAMIN
 # Grab data for TAMIN variable and place in object df1
 df1 <- ncvar_get(dat, tmin)
 
-head(df1, n = 10L)# head(x, n = 6L, ...); head returns the first data  entries, x is the object, n sets the number of entries displayed. tail returns  the last of the data entries			
+#head(df1, n = 10L)# head(x, n = 6L, ...); head returns the first data  entries, x is the object, 
+#n sets the number of entries displayed. tail returns  the last of the data entries			
 # Dimensions of df1 (x, y, time)
 dim(df1)
 
 # Dimensions can also be examined one at a time
-dim(df1)[1]		# number of x grids (36)
-dim(df1)[2]		# number of y grids (21)
+dim(df1)[1]		# number of x grids (37)
+dim(df1)[2]		# number of y grids (22)
 dim(df1)[3]		# number of months in file (49)
 #NOTE: FILE INCLUDES MONTHS OTHER THAN JANUARY (Jans are 1,13,25,37,49)
 
@@ -53,8 +56,8 @@ df1[1,1,1]
 df1[,,1]
 ```
 ```{r}
-#Create a new matrix which is monthly averages for each grid cell. Make the new  matix the same size (i.e. same
-# number of rows and columns as there are in the dataframe df1
+#Create a new matrix which is monthly averages for each grid cell. Make the new  matrix the 
+#same size (i.e. same number of rows and columns as there are in the dataframe df1
 sum1 <- array(data=NA, c(dim(df1)[1],dim(df1)[2] ))
 dim(sum1)
 
@@ -78,11 +81,13 @@ length(x)
 length(y)
 dim(sum1)
 
-## define the netcdf coordinate variables - note that these are coming from the dat  file with actual values
+## define the netcdf coordinate variables - note that these are coming from the dat
+#file with actual values
 dim1 = ncdim_def( "X","meters", as.double(x))
 dim2 = ncdim_def( "Y","meters", as.double(y))
 
-## define the EMPTY (climate) netcdf variable and define names that will be used in  the var.def.ncdf function
+## define the EMPTY (climate) netcdf variable and define names that will be used in the 
+#var.def.ncdf function
 # Define climate variable names
 	new.name <- 'mintemp'
 # Define units of measurement for variable
@@ -92,7 +97,6 @@ dim2 = ncdim_def( "Y","meters", as.double(y))
 
 varz = ncvar_def(new.name,units, list(dim1,dim2), -1, 
           longname=long.name)
-
 
 # associate the netcdf variable with a netcdf file   
 # put the variable into the file, and close
