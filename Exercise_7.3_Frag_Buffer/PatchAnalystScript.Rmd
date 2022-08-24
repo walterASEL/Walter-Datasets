@@ -1,0 +1,98 @@
+---
+title: "7.3 Fragstats Metrics within Buffers"
+author: "Manual of Applied Spatial Ecology"
+date: "3/28/2019"
+output: 
+  pdf_document: default
+html_document: default
+editor_options: 
+  chunk_output_type: console
+---
+Some research designs may just need landscape metrics for a single area or several study areas and that is what the SDMToolsl package is able to estimate in the code that follows. While the single area can be defined by the extent of the raster we imported as in previous chapters, the ability of the SDMToolsl package to determine patch and class statistics depends on the area defined by the user from that could be study site, within polygons such as counties or townships, or within buffers around locations.
+
+1\. Exercise 7.1 and 7.2 - Download and extract zip folder into your preferred location
+
+2\. Set working directory to the extracted folder in R under Session - Set Working Directory...
+
+3\. Now open the script "Frag_Auto.Rmd" and run code directly from the script
+
+4\. First we need to load the packages needed for the exercise
+```{r warning=FALSE, message=FALSE}
+#library(SDMTools)
+library(raster)
+library(rgeos)
+library(plyr)
+library(landscapemetrics)
+```
+5\. Now let's have a separate section of code to include projection information we will use throughout the exercise. In previous versions, these lines of code were within each block of code
+```{r warning=FALSE, message=FALSE}
+utm12.crs <- CRS("+proj=utm +zone=12 +datum=NAD83 +units=m +no_defs +datum=GRS80 
+  +towgs84=0,0,0")
+```
+6\. Load vegetation raster layer textfile clipped in ArcMap
+```{r}
+crops <-raster("crop2012utm12.tif")
+
+# reclassify the values into 9 groups
+# all values between 0 and 20 equal 1, etc.
+m <- c(-Inf,0,NA,2, 7, 2, 20, 60, 3, 60, 70, 4, 110, 132, 5, 133, 150, 6, 151, 191, 7, 
+  192,Inf,NA)
+rclmat <- matrix(m, ncol=3, byrow=TRUE)
+rc <- reclassify(crops, rclmat)
+plot(rc)
+```
+\newline
+7\.What if we wanted to compare difference in patch statistics among all deer with all locations combined?
+
+We will start by creating buffers around individual locations for our mule deer dataset
+```{r warning=FALSE, message=FALSE}
+muleys <-read.csv("muleysexample.csv", header=T)
+
+#Remove outlier locations
+newmuleys <-subset(muleys, muleys$Long > -110.90 & muleys$Lat > 37.80)
+muleys <- newmuleys
+newmuleys <-subset(muleys, muleys$Long < -107)
+muleys <- newmuleys
+table(muleys$id)
+
+muleys$GPSFixTime<-as.POSIXct(muleys$GPSFixTime, format="%Y.%m.%d%H:%M:%S")
+
+#Only use the 5 lines of code below to subsample for demonstration purposes!
+onemuley <-muleys[1:5,]
+twomuley <-muleys[102:106,]
+shortmd <- rbind(onemuley, twomuley)
+shortmd$id <- factor(shortmd$id)#removed deer D12 because to few locations
+muleys <- shortmd
+```
+8\. Next we need to create a function to extract Fragstats metrics within individual polygons
+```{r eval=FALSE}
+buff3rd <- function(muleys) {
+  coords<-data.frame(x = muleys$X, y = muleys$Y)
+  deer.spdf <- SpatialPointsDataFrame(coords=coords, data = muleys, proj4string = utm12.crs)
+  settbuff <- gBuffer(deer.spdf, width=1000, byid=FALSE)
+  buffclip <- mask(rc, settbuff)
+  buff.data <- calculate_lsm(buffclip)
+  newline <- muleys$id
+  bind <-cbind(newline[1], buff.data)
+}
+
+results <- ddply(muleys, .(id), buff3rd)
+results
+class(results)
+```
+9\. Code above looks at patch and class metrics for each deer by combining all buffers into one polygon for each deer (i.e., comparable to defining available habitat in 3rd order selection. However, what if we wanted to compare difference in patch statistics among all deer by averaging metrics across buffers?
+```{r eval=FALSE}
+coords<-data.frame(x = muleys$X, y = muleys$Y)
+deer.spdf <- SpatialPointsDataFrame(coords=coords, data = muleys, proj4string = utm12.crs)
+setbuff <- gBuffer(deer.spdf, width=1000, byid=TRUE)
+muleys$newID <- paste(muleys$id, setbuff@plotOrder, sep="_")
+muleys$newID <- as.factor(muleys$newID)
+
+buff3rdA <- function(muleys) {
+  bufclip <- mask(rc, setbuff)
+  buf.data <- PatchStat(bufclip)
+}
+
+results2 <- ddply(muleys, .(newID), buff3rdA)
+results2
+```
