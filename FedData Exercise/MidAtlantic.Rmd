@@ -1,0 +1,91 @@
+---
+title: "Exercise 1.11 - FedData"
+author: "Manual of Applied Spatial Ecology"
+date: "1/5/2021"
+output: 
+  pdf_document: default
+  html_document: default
+editor_options: 
+  chunk_output_type: console
+---
+1\. Exercise 1.11 - Download and extract zip folder into your preferred location
+
+2\. Set working directory to the extracted folder in R under Session - Set Working Directory...
+
+3\. Now open the script "MidAtlantic.Rmd" and run code directly from the script
+
+4\. First we need to load the packages needed for the exercise
+```{r warning=FALSE, message=FALSE}
+library(rgdal)
+library(raster)
+library(FedData)
+sessionInfo()#be usre version 3.0 is installed
+```
+1\.Initially we want to bring in a shapefile of Counties across the region. Alternatively, individual shapefiles of counties in each state could be used here but it is easier to bring in one shapefile and extract what we need from it.
+```{r}
+region<-readOGR(dsn=".",layer="MidAtlanticCounties",verbose=FALSE)
+PAstate <- subset(region, region$STATE == "PA")
+#PAstate <-readOGR(dsn=".",layer="PaCounty2019_05",verbose=FALSE)
+OHstate <- subset(region, region$STATE == "OH")
+
+```
+13\. Here we are going to explore a new method to download NLCD or Digital Elevation Data from online within a polygon from your study site. Need to install github version of FedData using code below and be sure it is the updated version FedData_3.0.0.9000
+```{r}
+PAnlcd <- get_nlcd(template=PAstate, label = 'Pennsylvania',force.redo = T)
+OHnlcd <- get_nlcd(template=OHstate, label = 'Ohio',force.redo = T)
+nlcd <- mosaic(PAnlcd, OHnlcd, fun=min)
+plot(nlcd)
+#writeRaster(nlcd,"mosaic_nlcd.tif",format="GTiff",datatype = 'INT4U',overwrite=T)
+
+#nlcd <- raster("mosaic_nlcd.tif")
+# PAstate <- spTransform(PAstate, CRS=proj4string(PAnlcd))
+# OHstate <- spTransform(OHstate, CRS=proj4string(OHnlcd))
+# plot(PAstate, add=T);plot(OHstate, add=T)
+
+PADEM <- get_ned(template=PAstate, label = 'PAdem',force.redo = T)
+#PADEM.proj <- projectRaster(PADEM,PAnlcd,method='ngb')
+#writeRaster(PADEM.proj,"PA_elev.tif",format="GTiff",datatype = 'INT4U',overwrite=T)
+
+#Or read in raster from above
+PADEM.proj <- raster("PA_elev.tif")
+plot(PADEM.proj)
+plot(PAstate, add = TRUE)
+```
+
+
+```{r}
+DMA2 <- readOGR(dsn=".",layer="PGC_CWDManagementUnits2020",verbose=FALSE)
+DMA2.proj <- spTransform(DMA2, CRS=proj4string(PAnlcd))
+DMA_DAYMET <- get_daymet(template=DMA2.proj,label = 'PAdaymet',elements = c('prcp','tmin','tmax'),
+                     years = 2010:2013)
+plot(DMA_DAYMET$tmin$X2011.05.23)
+plot(DMA_DAYMET$tmin$X2011.06.23)
+plot(DMA_DAYMET$tmin$X2011.10.23)
+plot(DMA_DAYMET$tmin$X2012.05.23)
+plot(DMA_DAYMET$prcp$X2011.05.23)
+
+GHCN.prcp <- get_ghcn_daily(template=DMA2, label='GHCNprecip', elements=c('prcp'))
+plot(DMA2)
+plot(GHCN.prcp$spatial, pch=1)
+legend('topright', pch=1, legend='GHCN Precipitation Records')
+```
+
+
+```{r}
+DMAsoil <- get_ssurgo(template=PAstate, label = 'DMA_SSURGO',force.redo = T) 
+
+
+```
+
+```{r}
+NHD <- get_nhd(template=PAstate, label='PAnhd')%>%
+  plot_nhd(template = PAstate)
+get_nhd(template=PAstate, label='PAnhd')%>%
+  plot_nhd(template = PAstate)
+plot(DMA2.proj)
+plot(NHD$NHDFlowline, add=T)
+plot(NHD$NHDLine, add=T)
+plot(NHD$NHDArea, col='black', add=T)
+plot(NHD$NHDWaterbody, col='black', add=T)
+```
+
