@@ -25,6 +25,11 @@ We will now explore some transformations of data in R to help understand what Pr
 
 3\. Now open the script "MDprojections.R" and run code directly from the script
 
+```{r}
+setwd("~/Library/CloudStorage/OneDrive-ThePennsylvaniaStateUniversity/WalterRprojects/Walter-Datasets/Exercise_1.4_Projections")
+```
+
+
 4\. First we need to load the packages needed for the exercise
 ```{r warning=FALSE, message=FALSE}
 library(rgdal)
