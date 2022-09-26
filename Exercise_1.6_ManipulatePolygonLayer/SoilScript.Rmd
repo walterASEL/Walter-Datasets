@@ -12,6 +12,11 @@ editor_options:
 
 2\. Set working directory to the extracted folder in R under Session - Set Working Directory...
 
+```{r}
+setwd("Exercise_1.6_ManipulatePolygonLayer")
+```
+
+
 3\. Now open the script "SoilScript.Rmd" and run code directly from the script
 
 4\. First we need to load the packages needed for the exercise
