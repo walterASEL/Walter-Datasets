@@ -14,6 +14,11 @@ editor_options:
 
 3\. Now open the script "MidAtlantic.Rmd" and run code directly from the script
 
+```{r}
+setwd("Exercise_1.11_FedData")
+```
+
+
 4\. First we need to load the packages needed for the exercise
 ```{r warning=FALSE, message=FALSE}
 library(rgdal)
