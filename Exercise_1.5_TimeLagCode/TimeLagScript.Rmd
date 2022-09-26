@@ -42,7 +42,7 @@ temp$timediff <- as.numeric(timediff)
 ```
 7\. We can then either export this file as an excel file for use in other programs or use it in R in subsequent analysis
 ```{r}
-write.csv(temp, "TimeDiffdata.csv", row.names=TRUE,sep=" ", col.names=TRUE, quote=TRUE, na="NA")
+#write.csv(temp, "TimeDiffdata.csv", row.names=TRUE,sep=" ", col.names=TRUE, quote=TRUE, na="NA")
 ```
 8\. Next we can add code below to include night and day into datasets and to also to account for daylight savings. Package RAtmosphere will eliminate the need for the chunk of code below if working on an earlier version of R (i.e., code not available for R 3.2.1 plus). Thanks to Duane Diefenbach, PA Coop Unit Leader, for compiling all this from online sources.
 
