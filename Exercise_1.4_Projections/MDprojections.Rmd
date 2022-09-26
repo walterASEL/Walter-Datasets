@@ -23,7 +23,7 @@ We will now explore some transformations of data in R to help understand what Pr
 
 2\. Set working directory to the extracted folder in R under Session - Set Working Directory...
 
-3\. Now open the script "MDprojections.R" and run code directly from the script
+3\. Now open the script "MDprojections.Rmd" and run code directly from the script
 
 ```{r}
 setwd("Exercise_1.4_Projections")
