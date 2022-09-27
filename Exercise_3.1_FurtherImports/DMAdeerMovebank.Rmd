@@ -24,7 +24,7 @@ library(circular)
 ```
 5\. Next we are going to the [Movebank](https://www.movebank.org/) home page and explore what it has to offer. Need to create an account or select a dataset that does not require permission to use.
 ```{r eval=FALSE}
-login <- movebankLogin(username="wdwalter", password="Cervus54")
+login <- movebankLogin(username="wdwalter", password="xxxxxxx")
 ```
 ```{r eval=FALSE}
 deer <- getMovebankData(study="DMA White-tailed Deer 2018 Pennsylvania USA",
