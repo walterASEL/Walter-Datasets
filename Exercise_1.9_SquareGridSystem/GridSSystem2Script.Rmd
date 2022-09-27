@@ -112,7 +112,7 @@ new2 = cbind(deer.albers@data, o2)#No more NAs causing errors!
 ```
 12\. Now we can load a vegetation raster layer textfile clipped in ArcMap to summarize vegetation categories within each polygon grid cell.
 ```{r}
-veg <-raster("extentnlcd2.txt")
+veg <-raster("cropnlcd.tif")
 plot(veg)
 class(veg)
 ```
