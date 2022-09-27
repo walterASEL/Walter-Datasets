@@ -23,11 +23,12 @@ setwd("Exercise_1.11_FedData")
 ```{r warning=FALSE, message=FALSE}
 library(rgdal)
 library(raster)
-# remotes::install_github(repo = "r-lib/devtools",
-#                              dependencies = TRUE,
-#                              upgrade = TRUE)
-#install.packages("devtools")
-#devtools::install_github("ropensci/FedData")
+remotes::install_github(repo = "r-lib/devtools",
+                             dependencies = TRUE,
+                             upgrade = TRUE)
+install.packages("devtools")
+library(devtools)
+devtools::install_github("ropensci/FedData")
 library(FedData)
 sessionInfo()#be sure version 3.0 is installed
 ```
@@ -67,7 +68,7 @@ plot(PAstate, add = TRUE)
 DMA2 <- readOGR(dsn=".",layer="PGC_CWDManagementUnits2020",verbose=FALSE)
 DMA2.proj <- spTransform(DMA2, CRS=proj4string(PAnlcd))
 DMA_DAYMET <- get_daymet(template=DMA2.proj,label = 'PAdaymet',elements = c('prcp','tmin','tmax'),
-                     years = 2010:2013)
+                     years = 2010:2011)
 plot(DMA_DAYMET$tmin$X2011.05.23)
 plot(DMA_DAYMET$tmin$X2011.06.23)
 plot(DMA_DAYMET$tmin$X2011.10.23)
