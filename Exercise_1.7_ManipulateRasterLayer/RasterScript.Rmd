@@ -185,6 +185,7 @@ bv49 <-read.csv("Bird49.csv", header=T)#How many bird locations?
 #Make a spatial points data frame of locations and convert to Albers
 coords<-data.frame(x = bv49$x, y = bv49$y)
 bvspdf <- SpatialPointsDataFrame(coords= coords, data = bv49, proj4string = CRS(utm.crs))
+#utm.crs<-"+proj=utm +zone=17 +ellps=WGS84" #NOTE: If using a mac, remove the N in zone 17 then run line above
 plot(bvspdf, col="red")
 #NOTE: Locations must be assigned to the UTM coordinate system prior to projection to Albers 
 #so won't overlay on veg layer at this point because veg is in Albers
